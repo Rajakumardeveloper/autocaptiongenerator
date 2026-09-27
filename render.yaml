@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: autocaption-ai
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: WHISPER_MODEL
+        value: base
+      - key: WHISPER_DEVICE
+        value: cpu
+      - key: WHISPER_COMPUTE_TYPE
+        value: int8
+      - key: WHISPER_BEAM_SIZE
+        value: "1"
+      - key: WHISPER_BEST_OF
+        value: "1"
+      - key: WHISPER_THREADS
+        value: "2"

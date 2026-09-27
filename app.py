@@ -1,4 +1,5 @@
 import os
+import asyncio
 import json
 import re
 import shutil
@@ -63,11 +64,21 @@ async def favicon_svg():
     return Response(status_code=204)
 
 
+whisper_threads = int(os.getenv("WHISPER_THREADS", "2" if is_cloud else "4"))
+print(f"[AutoCaption] Initializing Whisper model '{MODEL_SIZE}' on {DEVICE} ({COMPUTE_TYPE}, threads={whisper_threads})...")
 model = WhisperModel(
     MODEL_SIZE,
     device=DEVICE,
     compute_type=COMPUTE_TYPE,
+    cpu_threads=whisper_threads,
+    num_workers=1,
 )
+print(f"[AutoCaption] Whisper model '{MODEL_SIZE}' ready.")
+
+
+def _transcribe_worker(audio_path_str: str, kwargs: dict):
+    segments_iter, info = model.transcribe(audio_path_str, **kwargs)
+    return list(segments_iter), info
 
 # Temporary editor sessions. Each session keeps the uploaded source video and
 # transcription data until the user renders the final edited MP4.
@@ -1394,7 +1405,7 @@ async def caption_video(
                     raise HTTPException(status_code=413, detail=f"Video is too large. Maximum size is {MAX_UPLOAD_MB} MB.")
                 f.write(chunk)
 
-        audio_path = extract_audio_for_transcription(input_path, workdir)
+        audio_path = await asyncio.to_thread(extract_audio_for_transcription, input_path, workdir)
         requested_mode = (language or "auto").strip().lower()
         if requested_mode not in {"auto", "hinglish", "hi", "en"}:
             requested_mode = "auto"
@@ -1442,8 +1453,7 @@ async def caption_video(
             transcribe_kwargs["language"] = "en"
             transcribe_kwargs["multilingual"] = False
 
-        segments_iter, info = model.transcribe(str(audio_path), **transcribe_kwargs)
-        segments = list(segments_iter)
+        segments, info = await asyncio.to_thread(_transcribe_worker, str(audio_path), transcribe_kwargs)
         if not segments:
             raise HTTPException(status_code=422, detail="No speech was detected in the video.")
 
@@ -1651,7 +1661,7 @@ async def render_editor(request: dict):
         output_path = workdir / f"captioned-edited-{uuid.uuid4().hex[:8]}.mp4"
         video_width, video_height = probe_video_dimensions(input_path)
         write_ass(render_chunks, subtitle_path, font_size, position_percent, style, video_width, video_height, template)
-        run_ffmpeg(input_path, subtitle_path, output_path, audio_volume)
+        await asyncio.to_thread(run_ffmpeg, input_path, subtitle_path, output_path, audio_volume)
 
         filename = Path(session["filename"]).stem + "-edited.mp4"
         return FileResponse(output_path, media_type="video/mp4", filename=filename)
