@@ -149,6 +149,104 @@ function templateWordMarkup(group, startIndex, activeIndex, tagName='strong') {
   }).join(' ') + close;
 }
 
+function formatCaptionLinesJS(words, template) {
+  const clean = (words || []).map(w => typeof w === 'string' ? w : (w?.text || '')).map(s => String(s).trim()).filter(Boolean);
+  if (!clean.length) return '';
+  const maxLines = Number(template?.max_lines || 2);
+  if (maxLines === 1 || clean.length <= 1) return clean.join(' ');
+  const wpl = (template?.words_per_line && Array.isArray(template.words_per_line) && template.words_per_line.length)
+    ? template.words_per_line
+    : (clean.length === 3 ? [2, 1] : [Math.max(1, Math.floor(clean.length / 2)), Math.max(1, clean.length - Math.floor(clean.length / 2))]);
+
+  const lines = [];
+  let idx = 0;
+  for (let i = 0; i < wpl.length; i++) {
+    if (idx >= clean.length) break;
+    const count = wpl[i];
+    if (i === wpl.length - 1) {
+      lines.push(clean.slice(idx).join(' '));
+      idx = clean.length;
+    } else {
+      const remainingLines = wpl.length - (i + 1);
+      let take = Math.min(count, clean.length - idx);
+      if ((clean.length - (idx + take)) < remainingLines) {
+        take = Math.max(1, clean.length - idx - remainingLines);
+      }
+      lines.push(clean.slice(idx, idx + take).join(' '));
+      idx += take;
+    }
+  }
+  if (idx < clean.length) {
+    if (lines.length) lines[lines.length - 1] += ' ' + clean.slice(idx).join(' ');
+    else lines.push(clean.slice(idx).join(' '));
+  }
+  return lines.join('\n');
+}
+
+function partitionWordsJS(words, template, explicitText = '') {
+  const list = (words || []).slice();
+  if (!list.length) return [];
+  const maxLines = Number(template?.max_lines || 2);
+  if (maxLines === 1 || list.length <= 1) return [list];
+
+  const rawText = String(explicitText || '').trim();
+  if (rawText.includes('\n')) {
+    const textLines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+    if (textLines.length > 1) {
+      const groups = [];
+      let wIdx = 0;
+      for (let i = 0; i < textLines.length; i++) {
+        const count = textLines[i].split(/\s+/).filter(Boolean).length;
+        if (i === textLines.length - 1) {
+          groups.push(list.slice(wIdx));
+          wIdx = list.length;
+        } else {
+          const remaining = textLines.length - (i + 1);
+          let take = Math.min(count, list.length - wIdx);
+          if ((list.length - (wIdx + take)) < remaining) {
+            take = Math.max(1, list.length - wIdx - remaining);
+          }
+          groups.push(list.slice(wIdx, wIdx + take));
+          wIdx += take;
+        }
+      }
+      if (wIdx < list.length) {
+        if (groups.length) groups[groups.length - 1].push(...list.slice(wIdx));
+        else groups.push(list.slice(wIdx));
+      }
+      return groups.filter(g => g.length > 0);
+    }
+  }
+
+  const wpl = (template?.words_per_line && Array.isArray(template.words_per_line) && template.words_per_line.length)
+    ? template.words_per_line
+    : (list.length === 3 ? [2, 1] : [Math.max(1, Math.floor(list.length / 2)), Math.max(1, list.length - Math.floor(list.length / 2))]);
+
+  const groups = [];
+  let wIdx = 0;
+  for (let i = 0; i < wpl.length; i++) {
+    if (wIdx >= list.length) break;
+    const count = wpl[i];
+    if (i === wpl.length - 1) {
+      groups.push(list.slice(wIdx));
+      wIdx = list.length;
+    } else {
+      const remaining = wpl.length - (i + 1);
+      let take = Math.min(count, list.length - wIdx);
+      if ((list.length - (wIdx + take)) < remaining) {
+        take = Math.max(1, list.length - wIdx - remaining);
+      }
+      groups.push(list.slice(wIdx, wIdx + take));
+      wIdx += take;
+    }
+  }
+  if (wIdx < list.length) {
+    if (groups.length) groups[groups.length - 1].push(...list.slice(wIdx));
+    else groups.push(list.slice(wIdx));
+  }
+  return groups.filter(g => g.length > 0);
+}
+
 const templates = [
   {id:'bold_white', name:'Bold White', tag:'Oversized', a:'MAKE IT', b:'BOLD', cls:'t-bold-white'},
   {id:'white_yellow', name:'White + Yellow', tag:'Creator', a:'THIS IS', b:'IMPORTANT', cls:'t-white-yellow'},
@@ -557,12 +655,16 @@ function syncTemplateSelectionUI() {
 
 function openCaptionEditor(data) {
   editorSessionId = data.session_id;
-  editorChunks = cloneChunks(data.chunks);
-  originalEditorChunks = cloneChunks(data.chunks);
   selectedTemplate = (data.template && data.template.id) || data.template || selectedTemplate;
   selectedTemplateObject = (typeof data.template === 'object' ? data.template : templateById(selectedTemplate));
   editorTemplateId = selectedTemplate;
   editorTemplateObject = selectedTemplateObject;
+  editorChunks = cloneChunks(data.chunks).map(c => ({
+    ...c,
+    template_id: editorTemplateId,
+    template: editorTemplateObject
+  }));
+  originalEditorChunks = cloneChunks(editorChunks);
   syncTemplateSelectionUI();
   fontSize.value = data.font_size || fontSize.value;
   fontSizeValue.textContent = fontSize.value;
@@ -667,7 +769,9 @@ function updateChunkFromRow(row) {
   const c = getChunkById(id);
   if (!c) return;
   activeCaptionId = c.id;
-  const text = row.querySelector('.caption-text').value.replace(/\s+/g, ' ').trim();
+  const rawVal = row.querySelector('.caption-text').value;
+  const lines = rawVal.split('\n').map(l => l.replace(/[^\S\r\n]+/g, ' ').trim()).filter(Boolean);
+  const text = lines.join('\n');
   const start = Math.max(0, Number(row.querySelector('.caption-start').value) || 0);
   const end = Math.max(start + 0.05, Number(row.querySelector('.caption-end').value) || start + 0.5);
   const words = text.split(/\s+/).filter(Boolean);
@@ -675,6 +779,8 @@ function updateChunkFromRow(row) {
   c.start = start;
   c.end = end;
   c.words = rebuildWordsPreservingTracking(c.words, words, start, end);
+  c.template_id = editorTemplateId || selectedTemplate;
+  c.template = editorTemplateObject || selectedTemplateObject;
   const dur = row.querySelector('.caption-duration');
   if (dur) dur.textContent = fmtTime(end-start);
 
@@ -861,8 +967,16 @@ function updateEditorOverlay() {
   const activeWord = words.findIndex(w => t >= Number(w.start) && t <= Number(w.end));
   const signature = `${c.id}|${c.text}|${words.length}|${template.id}|${template.text_case}|${template.chunk_words}|${template.max_lines}`;
 
+  const animName = template.animation || 'pop';
+  const animClass = animName === 'bounce' ? 'anim-bounce'
+                  : animName === 'scale_in' ? 'anim-scale-in'
+                  : animName === 'slide' ? 'anim-slide'
+                  : animName === 'fade' ? 'anim-fade'
+                  : animName === 'glow_pulse' ? 'anim-glow-pulse'
+                  : 'anim-pop';
+
   editorCaptionOverlay.hidden = false;
-  editorCaptionOverlay.className = `editor-caption-overlay ${template.css_class || template.cls || ''}`;
+  editorCaptionOverlay.className = `editor-caption-overlay ${template.css_class || template.cls || ''} ${animClass}`;
   if (template.max_lines === 1 || Number(template.span_scale || 0.65) >= 0.95) {
     editorCaptionOverlay.classList.add('single-tier');
   } else {
@@ -872,13 +986,6 @@ function updateEditorOverlay() {
   // Animation synchronized to caption chunk
   if (c.id !== currentAnimatedChunkId) {
     currentAnimatedChunkId = c.id;
-    const animName = template.animation || 'pop';
-    const animClass = animName === 'bounce' ? 'anim-bounce'
-                    : animName === 'scale_in' ? 'anim-scale-in'
-                    : animName === 'slide' ? 'anim-slide'
-                    : animName === 'fade' ? 'anim-fade'
-                    : animName === 'glow_pulse' ? 'anim-glow-pulse'
-                    : 'anim-pop';
     editorCaptionOverlay.classList.remove('anim-pop', 'anim-bounce', 'anim-scale-in', 'anim-slide', 'anim-fade', 'anim-glow-pulse');
     void editorCaptionOverlay.offsetWidth;
     editorCaptionOverlay.classList.add(animClass);
@@ -888,18 +995,7 @@ function updateEditorOverlay() {
     lastOverlaySignature = signature;
     editorCaptionOverlay.innerHTML = '';
 
-    const maxLines = Number(template.max_lines || 2);
-    let lineWordGroups = [];
-    if (maxLines === 1 || words.length <= 1) {
-      lineWordGroups = [words];
-    } else if (words.length === 2) {
-      lineWordGroups = [[words[0]], [words[1]]];
-    } else if (words.length === 3) {
-      lineWordGroups = [[words[0], words[1]], [words[2]]];
-    } else {
-      const mid = Math.ceil(words.length / 2);
-      lineWordGroups = [words.slice(0, mid), words.slice(mid)];
-    }
+    const lineWordGroups = partitionWordsJS(words, template, c.text);
 
     let cursor = 0;
     lineWordGroups.forEach((group, lineIdx) => {
@@ -939,6 +1035,9 @@ function updateEditorOverlay() {
 
   editorCaptionOverlay.style.setProperty('--caption-font-size', `${Math.max(12, computedFontSize)}px`);
   editorCaptionOverlay.style.setProperty('--span-scale', template.span_scale || (template.max_lines === 1 ? '1.0' : '0.65'));
+  editorCaptionOverlay.style.setProperty('--line-height', String(template.line_height || 0.90));
+  editorCaptionOverlay.style.setProperty('--letter-spacing', `${template.letter_spacing || 0}px`);
+  editorCaptionOverlay.style.setProperty('--highlight-color', template.highlight_color || '#ffe600');
 
   positionEditorCaption(contentRect, positionRange.value);
   requestAnimationFrame(() => clampEditorCaptionToVideo(contentRect));
@@ -958,18 +1057,27 @@ addCaptionBtn.addEventListener('click', () => {
   const last = editorChunks[editorChunks.length-1];
   const start = last ? Number(last.end)+0.02 : Number(editorVideo.currentTime || 0);
   const end = Math.min(start+1.5, (editorVideo.duration || start+1.5));
+  const tmpl = editorTemplateObject || selectedTemplateObject || templateById(editorTemplateId || selectedTemplate);
+  const wordCount = Math.max(1, Number(tmpl?.chunk_words || 3));
+  const sampleWords = ['Type', 'your', 'caption', 'here'].slice(0, wordCount);
+  const formattedText = formatCaptionLinesJS(sampleWords, tmpl);
+  const duration = Math.max(0.2, end - start);
+  const perWord = duration / sampleWords.length;
   const newChunk = {
     id: editorChunks.length+1,
     start,
     end,
-    text:'Type your caption here',
+    text: formattedText,
     template_id: editorTemplateId || selectedTemplate,
-    words: [
-      {text:'Type', start: start, end: start + (end-start)*0.25},
-      {text:'your', start: start + (end-start)*0.25, end: start + (end-start)*0.5},
-      {text:'caption', start: start + (end-start)*0.5, end: start + (end-start)*0.75},
-      {text:'here', start: start + (end-start)*0.75, end: end}
-    ]
+    template: tmpl,
+    words: sampleWords.map((w, i) => ({
+      text: w,
+      start: start + i * perWord,
+      end: i === sampleWords.length - 1 ? end : start + (i + 1) * perWord,
+    })),
+    pattern_words: wordCount,
+    pattern_max_chars: Number(tmpl?.max_chars || 28),
+    pattern_max_lines: Number(tmpl?.max_lines || 2),
   };
   editorChunks.push(newChunk); renumberChunks(); activeCaptionId = newChunk.id;
   renderCaptionRows();

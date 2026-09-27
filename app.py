@@ -323,44 +323,44 @@ CAPTION_TEMPLATES = {
 # SINGLE SOURCE OF TRUTH FOR TEMPLATE FIDELITY
 # =========================================================
 TEMPLATE_META = {
-    "bold_white": {"category":"Built-in Templates", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "white_yellow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":24, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "yellow_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
-    "creator_bold": {"category":"Built-in Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.82, "letter_spacing":0, "position":"center", "animation":"pop", "highlight_mode":"word"},
-    "clean_white": {"category":"Static Captions", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "yellow_bold": {"category":"Built-in Templates", "chunk_words":3, "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "black_box": {"category":"Static Captions", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"scale_in", "highlight_mode":"word"},
-    "white_box": {"category":"Static Captions", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"scale_in"},
-    "red_alert": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"bounce"},
-    "cyan_pop": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "blue_electric": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "pink_creator": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "soft_aesthetic": {"category":"Static Captions", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "typewriter": {"category":"Static Captions", "chunk_words":5, "max_chars":29, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0.5, "position":"lower", "animation":"scale_in"},
-    "cream_retro": {"category":"Built-in Templates", "chunk_words":4, "max_chars":27, "max_lines":2, "text_case":"upper", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "minimal_shadow": {"category":"Static Captions", "chunk_words":5, "max_chars":31, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "news_ticker": {"category":"AI / Creator Templates", "chunk_words":5, "max_chars":31, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"slide"},
-    "purple_neon": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
-    "green_focus": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"pop"},
-    "editing_skool": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "mr_beast": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"bounce"},
-    "mr_beast_gold": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"bounce"},
-    "highlight_orange": {"category":"Dynamic Captions", "chunk_words":4, "max_chars":27, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "green_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
-    "big_reveal": {"category":"AI / Creator Templates", "chunk_words":2, "max_chars":18, "max_lines":1, "text_case":"upper", "line_height":0.82, "letter_spacing":0, "position":"center", "animation":"pop"},
-    "deep_shadow": {"category":"Static Captions", "chunk_words":4, "max_chars":28, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "aqua_pop": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "red_black_punch": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "clean_glow": {"category":"Built-in Templates", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "pixelated_word": {"category":"Static Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "liquid_glass": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"scale_in"},
-    "tabahi": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.84, "letter_spacing":0, "position":"center", "animation":"pop"},
-    "deep_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
-    "highlighted_word": {"category":"Dynamic Captions", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "delhi_editor": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":28, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "aura_blue": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"glow_pulse"},
-    "swiss_focus": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"lower", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "scribble": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
+    "bold_white": {"category":"Built-in Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":26, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "white_yellow": {"category":"Dynamic Captions", "chunk_words":3, "words_per_line":[2, 1], "max_chars":24, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
+    "yellow_glow": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[2], "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
+    "creator_bold": {"category":"Built-in Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.82, "letter_spacing":0, "position":"center", "animation":"pop", "highlight_mode":"word"},
+    "clean_white": {"category":"Static Captions", "chunk_words":4, "words_per_line":[2, 2], "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "yellow_bold": {"category":"Built-in Templates", "chunk_words":2, "words_per_line":[2], "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "black_box": {"category":"Static Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"scale_in", "highlight_mode":"word"},
+    "white_box": {"category":"Static Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"scale_in"},
+    "red_alert": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"bounce"},
+    "cyan_pop": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "blue_electric": {"category":"AI / Creator Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "pink_creator": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "soft_aesthetic": {"category":"Static Captions", "chunk_words":3, "words_per_line":[2, 1], "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "typewriter": {"category":"Static Captions", "chunk_words":3, "words_per_line":[2, 1], "max_chars":29, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0.5, "position":"lower", "animation":"scale_in"},
+    "cream_retro": {"category":"Built-in Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":27, "max_lines":2, "text_case":"upper", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "minimal_shadow": {"category":"Static Captions", "chunk_words":3, "words_per_line":[2, 1], "max_chars":31, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "news_ticker": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":31, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"slide"},
+    "purple_neon": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
+    "green_focus": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"pop"},
+    "editing_skool": {"category":"AI / Creator Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "mr_beast": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"bounce"},
+    "mr_beast_gold": {"category":"AI / Creator Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"bounce"},
+    "highlight_orange": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":27, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
+    "green_glow": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
+    "big_reveal": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":18, "max_lines":2, "text_case":"upper", "line_height":0.82, "letter_spacing":0, "position":"center", "animation":"pop"},
+    "deep_shadow": {"category":"Static Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":28, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "aqua_pop": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "red_black_punch": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "clean_glow": {"category":"Built-in Templates", "chunk_words":4, "words_per_line":[2, 2], "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "pixelated_word": {"category":"Static Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
+    "liquid_glass": {"category":"AI / Creator Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"scale_in"},
+    "tabahi": {"category":"AI / Creator Templates", "chunk_words":4, "words_per_line":[2, 2], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.84, "letter_spacing":0, "position":"center", "animation":"pop"},
+    "deep_glow": {"category":"Dynamic Captions", "chunk_words":4, "words_per_line":[2, 2], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
+    "highlighted_word": {"category":"Dynamic Captions", "chunk_words":3, "words_per_line":[1, 2], "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
+    "delhi_editor": {"category":"AI / Creator Templates", "chunk_words":4, "words_per_line":[2, 2], "max_chars":28, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "aura_blue": {"category":"AI / Creator Templates", "chunk_words":2, "words_per_line":[1, 1], "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"glow_pulse"},
+    "swiss_focus": {"category":"Dynamic Captions", "chunk_words":2, "words_per_line":[1, 1], "max_chars":23, "max_lines":2, "text_case":"lower", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
+    "scribble": {"category":"AI / Creator Templates", "chunk_words":3, "words_per_line":[2, 1], "max_chars":23, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
 }
 
 TEMPLATE_PRESENTATION = {
@@ -414,6 +414,9 @@ def get_template_object(template_id: str) -> dict:
     name, tag, css_class, preview_a, preview_b = TEMPLATE_PRESENTATION.get(
         template_id, (template_id, "Creator", "t-bold-white", "CAPTION", "STYLE")
     )
+    max_lines = int(meta.get("max_lines", 2))
+    chunk_words = int(meta.get("chunk_words", 4))
+    words_per_line = list(meta.get("words_per_line") or ([2, 1] if max_lines > 1 else [chunk_words]))
     base.update({
         "id": template_id,
         "name": name,
@@ -422,9 +425,10 @@ def get_template_object(template_id: str) -> dict:
         "css_class": css_class,
         "preview_a": preview_a,
         "preview_b": preview_b,
-        "chunk_words": int(meta.get("chunk_words", 4)),
+        "chunk_words": chunk_words,
+        "words_per_line": words_per_line,
         "max_chars": int(meta.get("max_chars", 28)),
-        "max_lines": int(meta.get("max_lines", 2)),
+        "max_lines": max_lines,
         "text_case": meta.get("text_case", "sentence"),
         "line_height": float(meta.get("line_height", 0.90)),
         "letter_spacing": float(meta.get("letter_spacing", 0)),
@@ -542,8 +546,108 @@ def capitalize_first_word(text: str) -> str:
     return "".join(chars)
 
 
-def transform_chunks_language(chunks, mode: str) -> list:
-    """Apply the selected output mode to caption words."""
+def format_caption_lines(words: list, template: dict) -> str:
+    """Format words into lines strictly using template's words_per_line and max_lines."""
+    clean_words = [str(w).strip() for w in words if str(w).strip()]
+    if not clean_words:
+        return ""
+    max_lines = max(1, int(template.get("max_lines", 2)))
+    if max_lines == 1 or len(clean_words) <= 1:
+        return " ".join(clean_words)
+    wpl = list(template.get("words_per_line") or [])
+    if not wpl:
+        wpl = [2, 1] if len(clean_words) == 3 else [max(1, len(clean_words) // 2), max(1, len(clean_words) - len(clean_words) // 2)]
+
+    lines = []
+    idx = 0
+    for i, count in enumerate(wpl):
+        if idx >= len(clean_words):
+            break
+        if i == len(wpl) - 1:
+            lines.append(" ".join(clean_words[idx:]))
+            idx = len(clean_words)
+        else:
+            remaining_lines = len(wpl) - (i + 1)
+            take = min(count, len(clean_words) - idx)
+            if (len(clean_words) - (idx + take)) < remaining_lines:
+                take = max(1, len(clean_words) - idx - remaining_lines)
+            lines.append(" ".join(clean_words[idx:idx + take]))
+            idx += take
+    if idx < len(clean_words):
+        if lines:
+            lines[-1] = lines[-1] + " " + " ".join(clean_words[idx:])
+        else:
+            lines.append(" ".join(clean_words[idx:]))
+    return "\n".join(lines)
+
+
+def partition_chunk_words(chunk: dict, template: dict) -> list[list[dict]]:
+    """Partition a chunk's words into lines based on explicit newlines in chunk['text'] or template's words_per_line."""
+    words = list(chunk.get("words", []) or [])
+    if not words:
+        raw_text = str(chunk.get("text", "")).strip()
+        if raw_text:
+            words = [{"text": w, "start": chunk.get("start", 0), "end": chunk.get("end", 0)} for w in raw_text.split()]
+        else:
+            return []
+    max_lines = max(1, int(template.get("max_lines", 2)))
+    if max_lines == 1 or len(words) <= 1:
+        return [words]
+
+    raw_text = str(chunk.get("text", "")).strip()
+    if "\n" in raw_text:
+        text_lines = [l.strip() for l in raw_text.splitlines() if l.strip()]
+        if len(text_lines) > 1:
+            line_groups = []
+            w_idx = 0
+            for i, line in enumerate(text_lines):
+                line_word_count = len(line.split())
+                if i == len(text_lines) - 1:
+                    line_groups.append(words[w_idx:])
+                    w_idx = len(words)
+                else:
+                    take = min(line_word_count, len(words) - w_idx)
+                    remaining = len(text_lines) - (i + 1)
+                    if (len(words) - (w_idx + take)) < remaining:
+                        take = max(1, len(words) - w_idx - remaining)
+                    line_groups.append(words[w_idx:w_idx + take])
+                    w_idx += take
+            if w_idx < len(words):
+                if line_groups:
+                    line_groups[-1].extend(words[w_idx:])
+                else:
+                    line_groups.append(words[w_idx:])
+            return [g for g in line_groups if g]
+
+    wpl = list(template.get("words_per_line") or [])
+    if not wpl:
+        wpl = [2, 1] if len(words) == 3 else [max(1, len(words) // 2), max(1, len(words) - len(words) // 2)]
+
+    line_groups = []
+    w_idx = 0
+    for i, count in enumerate(wpl):
+        if w_idx >= len(words):
+            break
+        if i == len(wpl) - 1:
+            line_groups.append(words[w_idx:])
+            w_idx = len(words)
+        else:
+            remaining = len(wpl) - (i + 1)
+            take = min(count, len(words) - w_idx)
+            if (len(words) - (w_idx + take)) < remaining:
+                take = max(1, len(words) - w_idx - remaining)
+            line_groups.append(words[w_idx:w_idx + take])
+            w_idx += take
+    if w_idx < len(words):
+        if line_groups:
+            line_groups[-1].extend(words[w_idx:])
+        else:
+            line_groups.append(words[w_idx:])
+    return [g for g in line_groups if g]
+
+
+def transform_chunks_language(chunks, mode: str, template: dict | None = None) -> list:
+    """Apply the selected output mode to caption words while preserving template line structure."""
     output = []
     for chunk in chunks:
         updated = dict(chunk)
@@ -554,7 +658,13 @@ def transform_chunks_language(chunks, mode: str) -> list:
             first = updated["words"][0]["text"]
             updated["words"][0]["text"] = capitalize_first_word(first)
 
-        updated["text"] = " ".join(w["text"] for w in updated["words"]).strip()
+        tmpl = template or chunk.get("template") or get_template_object(chunk.get("template_id", "bold_white"))
+        raw_text = str(chunk.get("text", "")).strip()
+        if "\n" in raw_text:
+            lines_of_words = partition_chunk_words(updated, tmpl)
+            updated["text"] = "\n".join(" ".join(w["text"] for w in lw) for lw in lines_of_words)
+        else:
+            updated["text"] = format_caption_lines([w["text"] for w in updated["words"]], tmpl)
         output.append(updated)
     return output
 
@@ -762,7 +872,7 @@ def make_caption_chunks(segments, template: dict | None = None):
         end = float(group[-1]["end"])
         if end <= start:
             end = start + 0.05
-        text = " ".join(w["text"] for w in group).strip()
+        text = format_caption_lines([w["text"] for w in group], template)
         chunks.append({
             "start": start,
             "end": end,
@@ -846,7 +956,11 @@ def prepare_render_chunks(chunks, template=None):
         if len(groups) == 1:
             copy = dict(chunk)
             copy['words'] = list(groups[0])
-            copy['text'] = ' '.join(str(w.get('text', '')).strip() for w in groups[0]).strip()
+            raw_text = str(chunk.get('text', '')).strip()
+            if '\n' in raw_text and len(raw_text.split()) == len(groups[0]):
+                copy['text'] = raw_text
+            else:
+                copy['text'] = format_caption_lines([w.get('text', '') for w in groups[0]], template)
             prepared.append(copy)
             continue
 
@@ -863,8 +977,10 @@ def prepare_render_chunks(chunks, template=None):
                 'id': f"{chunk.get('id', len(prepared)+1)}-{gi+1}",
                 'start': gs,
                 'end': max(gs + 0.05, ge),
-                'text': ' '.join(str(w.get('text', '')).strip() for w in group).strip(),
+                'text': format_caption_lines([w.get('text', '') for w in group], template),
                 'words': list(group),
+                'template': template,
+                'template_id': template.get('id', 'bold_white'),
             })
     return prepared
 
@@ -888,46 +1004,44 @@ def template_display_text(text: str, template: dict) -> str:
     return value
 
 
-def render_highlighted_text(chunk: dict, active_index: int, style: dict, max_chars: int, template: dict | None = None,
-                            span_size: int = 54, strong_size: int = 84) -> str:
+def render_highlighted_text(chunk: dict, active_index: int, template: dict,
+                            span_size: int = 54, strong_size: int = 84, is_glow_layer: bool = False) -> str:
     """Render one complete caption chunk while changing only the active word color."""
-    template = template or style or get_template_object("bold_white")
-    words = chunk.get('words', []) or []
-    texts = [template_display_text(w.get('text', ''), template) for w in words]
-    max_lines = max(1, int(template.get('max_lines', 2)))
-    if max_lines == 1 or len(texts) <= 1:
-        first = words
-        second = []
-        split = len(words)
-    else:
-        if len(texts) == 2:
-            split = 1
-        elif len(texts) == 3:
-            split = 2 if template.get("line_break_mode") != "first_word" else 1
-        else:
-            _, split = line_break_texts(texts, max_chars, str(template.get("line_break_mode", "balanced")))
-            if split == len(texts) and len(texts) >= 2:
-                split = len(texts) // 2
-        first = words[:split]
-        second = words[split:]
+    lines_of_words = partition_chunk_words(chunk, template)
+    if not lines_of_words:
+        return ""
 
     line1_color = ass_color(template.get('line1_color', template.get('text_color', '#FFFFFF')))
     line2_color = ass_color(template.get('line2_color', template.get('text_color', '#FFFFFF')))
     highlight_colour = ass_color(template.get('highlight_color', '#FFE600'))
+    glow_col = ass_color(template.get('glow_color', template.get('text_color', '#FFFFFF')))
 
-    def render_word(index, word, default_color):
-        safe = safe_ass_text(template_display_text(word.get('text', ''), template))
-        if index == active_index:
-            hl = ass_color('#FFFFFF') if default_color == highlight_colour else highlight_colour
-            return '{' + f'\\1c{hl}' + '}' + safe + '{' + f'\\1c{default_color}' + '}'
-        return safe
+    if is_glow_layer:
+        line1_color = glow_col
+        line2_color = glow_col
+        highlight_colour = glow_col
 
-    if second:
-        first_text = "{" + f"\\fs{span_size}\\1c{line1_color}" + "}" + ' '.join(render_word(i, word, line1_color) for i, word in enumerate(first))
-        second_text = "{" + f"\\fs{strong_size}\\1c{line2_color}" + "}" + ' '.join(render_word(split + i, word, line2_color) for i, word in enumerate(second))
-        return first_text + r'\N' + second_text
-    else:
-        return "{" + f"\\fs{strong_size}\\1c{line1_color}" + "}" + ' '.join(render_word(i, word, line1_color) for i, word in enumerate(first))
+    global_idx = 0
+    line_strings = []
+    for line_idx, line_words in enumerate(lines_of_words):
+        is_first = (line_idx == 0 and len(lines_of_words) > 1)
+        font_sz = span_size if is_first else strong_size
+        default_col = line1_color if is_first else line2_color
+
+        rendered_words = []
+        for word in line_words:
+            safe = safe_ass_text(template_display_text(word.get('text', ''), template))
+            if global_idx == active_index:
+                hl = ass_color('#FFFFFF') if default_col == highlight_colour and not is_glow_layer else highlight_colour
+                rendered_words.append('{' + f'\\1c{hl}' + '}' + safe + '{' + f'\\1c{default_col}' + '}')
+            else:
+                rendered_words.append(safe)
+            global_idx += 1
+
+        line_styled = "{" + f"\\fs{font_sz}\\1c{default_col}" + "}" + " ".join(rendered_words)
+        line_strings.append(line_styled)
+
+    return r"\N".join(line_strings)
 
 
 def _reference_canvas(video_width: int, video_height: int) -> tuple[int, int]:
@@ -965,13 +1079,6 @@ def write_ass(chunks, out_path: Path, font_size: int, position_percent: int, sty
 
     effective_size = strong_size
 
-    max_chars = max(12, int(template.get("max_chars", 28)))
-    safe_area = max(0.72, min(0.96, float(template.get("safe_area", 0.92))))
-    if source_height > source_width:
-        canvas_width = max(720, canvas_width)
-    safe_canvas_width = max(1, round(canvas_width * safe_area))
-    max_chars = min(max_chars, max(18, round(0.11 * safe_canvas_width)))
-
     base_y = round(canvas_height * (position_percent / 100.0))
     export_border_style = int(template.get("border_style", 1) or 1)
     scale_stroke = canvas_width / 720.0
@@ -981,7 +1088,7 @@ def write_ass(chunks, out_path: Path, font_size: int, position_percent: int, sty
     glow_size = float(template.get("glow_size", 8))
 
     if export_border_style == 3:
-        # Bounding box / card style (black_box, white_box, news_ticker, editing_skool, liquid_glass)
+        # Bounding box / card style (black_box, white_box, news_ticker, editing_skool, liquid_glass, red_black_punch)
         export_outline_width = max(8, round(10 * scale_stroke))
         bg_opacity = int(template.get('background_opacity', 90) or 90)
         bg_opacity = max(20, min(100, bg_opacity))
@@ -989,8 +1096,13 @@ def write_ass(chunks, out_path: Path, font_size: int, position_percent: int, sty
         bg_hex = template.get('background_color', '#000000')
         box_colour = ass_color(bg_hex, bg_alpha)
         box_outline_colour = box_colour
-        back_colour = box_colour
-        shadow_width = 0
+        raw_shadow = float(template.get('shadow_distance', template.get('shadow', 0)) or 0)
+        if raw_shadow > 0:
+            shadow_width = max(1, round(raw_shadow * scale_stroke))
+            back_colour = ass_color(template.get('shadow_color', '#000000'))
+        else:
+            shadow_width = 0
+            back_colour = "&H00000000"
     else:
         # Outline + Shadow style
         raw_outline = float(template.get('outline_width', 0) or 0)
@@ -1031,34 +1143,26 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     lines = [header]
     for chunk in (chunks or []):
         words = chunk.get('words', []) or []
-        if not words:
+        if not words and not chunk.get('text'):
             continue
-        raw_words = template_display_text(chunk.get('text', ''), template).split()
-        if not raw_words:
+        lines_of_words = partition_chunk_words(chunk, template)
+        if not lines_of_words:
             continue
-        max_lines = max(1, int(template.get('max_lines', 2)))
-        if max_lines == 1 or len(raw_words) <= 1:
-            display_text = "{" + f"\\fs{strong_size}" + "}" + safe_ass_text(" ".join(raw_words))
+
+        if len(lines_of_words) == 1:
+            line_col = ass_color(template.get('line1_color', template['text_color']))
+            txt = safe_ass_text(" ".join(template_display_text(w.get('text', ''), template) for w in lines_of_words[0]))
+            display_text = "{" + f"\\fs{strong_size}\\1c{line_col}" + "}" + txt
+            display_glow = "{" + f"\\fs{strong_size}\\1c{ass_color(glow_color)}" + "}" + txt
         else:
-            if len(raw_words) == 2:
-                split = 1
-            elif len(raw_words) == 3:
-                split = 2 if template.get("line_break_mode") != "first_word" else 1
-            else:
-                _, split = line_break_texts(raw_words, max_chars, str(template.get("line_break_mode", "balanced")))
-                if split == len(raw_words) and len(raw_words) >= 2:
-                    split = len(raw_words) // 2
-            left = " ".join(raw_words[:split])
-            right = " ".join(raw_words[split:])
-            if right:
-                left_col = ass_color(template.get('line1_color', template['text_color']))
-                right_col = ass_color(template.get('line2_color', template['text_color']))
-                left_styled = "{" + f"\\fs{span_size}\\1c{left_col}" + "}" + safe_ass_text(left)
-                right_styled = "{" + f"\\fs{strong_size}\\1c{right_col}" + "}" + safe_ass_text(right)
-                display_text = left_styled + r"\N" + right_styled
-            else:
-                line_col = ass_color(template.get('line1_color', template['text_color']))
-                display_text = "{" + f"\\fs{strong_size}\\1c{line_col}" + "}" + safe_ass_text(left)
+            left_col = ass_color(template.get('line1_color', template['text_color']))
+            right_col = ass_color(template.get('line2_color', template['text_color']))
+            txt_left = safe_ass_text(" ".join(template_display_text(w.get('text', ''), template) for w in lines_of_words[0]))
+            txt_right = safe_ass_text(" ".join(template_display_text(w.get('text', ''), template) for w in lines_of_words[1]))
+            display_text = ("{" + f"\\fs{span_size}\\1c{left_col}" + "}" + txt_left +
+                            r"\N{" + f"\\fs{strong_size}\\1c{right_col}" + "}" + txt_right)
+            display_glow = ("{" + f"\\fs{span_size}\\1c{ass_color(glow_color)}" + "}" + txt_left +
+                            r"\N{" + f"\\fs{strong_size}\\1c{ass_color(glow_color)}" + "}" + txt_right)
 
         line_count = max(1, display_text.count(r"\N") + 1)
         estimated_half_h = max(1, round(effective_size * line_count * max(0.38, float(template.get("line_height", 0.90)) * 0.55)))
@@ -1092,19 +1196,21 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         glow_blur = max(4, round(glow_size * scale_stroke * 0.9))
 
-        if template.get('highlight') and len(words) > 1:
-            for idx, word in enumerate(words):
+        all_flat_words = [w for line in lines_of_words for w in line]
+        if template.get('highlight') and len(all_flat_words) > 1:
+            for idx, word in enumerate(all_flat_words):
                 active_start = max(float(chunk['start']), float(word.get('start', chunk['start'])))
-                next_start = float(words[idx + 1].get('start', chunk['end'])) if idx + 1 < len(words) else float(chunk['end'])
+                next_start = float(all_flat_words[idx + 1].get('start', chunk['end'])) if idx + 1 < len(all_flat_words) else float(chunk['end'])
                 active_end = min(float(chunk['end']), next_start)
                 if active_end <= active_start:
                     continue
                 tag_to_use = pos_tag if abs(active_start - float(chunk['start'])) < 0.03 else pos_static
-                highlighted = render_highlighted_text(chunk, idx, template, max_chars, template, span_size, strong_size)
-                
+                highlighted = render_highlighted_text(chunk, idx, template, span_size, strong_size, is_glow_layer=False)
+
                 if is_glow:
+                    glow_highlighted = render_highlighted_text(chunk, idx, template, span_size, strong_size, is_glow_layer=True)
                     # Layer 0: Glow aura
-                    lines.append(f"Dialogue: 0,{ass_time(active_start)},{ass_time(active_end)},Glow,,0,0,0,,{tag_to_use}{{\\blur{glow_blur}}}{highlighted}\n")
+                    lines.append(f"Dialogue: 0,{ass_time(active_start)},{ass_time(active_end)},Glow,,0,0,0,,{tag_to_use}{{\\blur{glow_blur}}}{glow_highlighted}\n")
                     # Layer 1: Sharp text
                     lines.append(f"Dialogue: 1,{ass_time(active_start)},{ass_time(active_end)},Default,,0,0,0,,{tag_to_use}{{\\blur0}}{highlighted}\n")
                 else:
@@ -1112,7 +1218,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         else:
             if is_glow:
                 # Layer 0: Glow aura
-                lines.append(f"Dialogue: 0,{start},{end},Glow,,0,0,0,,{pos_tag}{{\\blur{glow_blur}}}{display_text}\n")
+                lines.append(f"Dialogue: 0,{start},{end},Glow,,0,0,0,,{pos_tag}{{\\blur{glow_blur}}}{display_glow}\n")
                 # Layer 1: Sharp text
                 lines.append(f"Dialogue: 1,{start},{end},Default,,0,0,0,,{pos_tag}{{\\blur0}}{display_text}\n")
             else:
@@ -1314,7 +1420,7 @@ async def caption_video(
         if not chunks:
             raise HTTPException(status_code=422, detail="Could not create captions.")
         if requested_mode in {"auto", "hinglish"}:
-            chunks = transform_chunks_language(chunks, requested_mode)
+            chunks = transform_chunks_language(chunks, requested_mode, template_object)
 
         # Make JSON-safe copies for the editor.
         editor_chunks = []
@@ -1323,11 +1429,12 @@ async def caption_video(
                 "id": i + 1,
                 "start": round(float(chunk["start"]), 3),
                 "end": round(float(chunk["end"]), 3),
-                "text": " ".join(str(chunk.get("text", "")).split()),
+                "text": str(chunk.get("text", "")),
                 "words": [
                     {"text": str(w.get("text", "")), "start": round(float(w.get("start", 0)), 3), "end": round(float(w.get("end", 0)), 3)}
                     for w in chunk.get("words", [])
                 ],
+                "template": template_object,
                 "template_id": template,
                 "pattern_words": len(chunk.get("words", []) or []),
                 "pattern_max_chars": int(template_object.get("max_chars", 28)),
@@ -1391,7 +1498,7 @@ def editor_source(session_id: str):
     )
 
 
-def _safe_editor_chunks(raw_chunks, original_chunks):
+def _safe_editor_chunks(raw_chunks, original_chunks, canonical_template=None):
     """Validate editor data while preserving real Whisper word timestamps.
 
     If a user fixes a word without changing the word count, the original
@@ -1411,10 +1518,12 @@ def _safe_editor_chunks(raw_chunks, original_chunks):
             end = max(start + 0.05, float(raw.get("end", start + 0.5)))
         except (TypeError, ValueError):
             continue
-        text = " ".join(str(raw.get("text", "")).replace("\n", " ").split()).strip()
-        if not text:
+        raw_text = str(raw.get("text", "")).strip()
+        lines = [" ".join(l.split()) for l in raw_text.splitlines() if l.strip()]
+        if not lines:
             continue
-        words = text.split()
+        text = "\n".join(lines)
+        words = (" ".join(lines)).split()
         raw_words = raw.get("words") if isinstance(raw.get("words"), list) else []
         source_words = raw_words if raw_words else originals.get(int(raw.get("id", idx + 1)), {}).get("words", [])
         timed_words = []
@@ -1437,16 +1546,23 @@ def _safe_editor_chunks(raw_chunks, original_chunks):
             per = duration / max(len(words), 1)
             timed_words = [{"text": word, "start": start + wi * per, "end": end if wi == len(words) - 1 else start + (wi + 1) * per} for wi, word in enumerate(words)]
         original = originals.get(int(raw.get("id", idx + 1)), {}) if isinstance(raw.get("id", idx + 1), (int, float, str)) else {}
+        tmpl = canonical_template or original.get("template") or raw.get("template") or get_template_object("bold_white")
+        tid = tmpl.get("id") or "bold_white"
+
+        if "\n" not in text and int(tmpl.get("max_lines", 2)) > 1 and len(words) > 1:
+            text = format_caption_lines(words, tmpl)
+
         result.append({
             "id": idx + 1,
             "start": start,
             "end": end,
             "text": text,
             "words": timed_words,
-            "template_id": raw.get("template_id") or original.get("template_id"),
-            "pattern_words": max(1, int(raw.get("pattern_words") or original.get("pattern_words") or len(source_words) or len(words))),
-            "pattern_max_chars": max(12, int(raw.get("pattern_max_chars") or original.get("pattern_max_chars") or 28)),
-            "pattern_max_lines": max(1, int(raw.get("pattern_max_lines") or original.get("pattern_max_lines") or 2)),
+            "template": tmpl,
+            "template_id": tid,
+            "pattern_words": max(1, int(raw.get("pattern_words") or original.get("pattern_words") or (tmpl.get("chunk_words") if tmpl else len(words)))),
+            "pattern_max_chars": max(12, int(raw.get("pattern_max_chars") or original.get("pattern_max_chars") or (tmpl.get("max_chars") if tmpl else 28))),
+            "pattern_max_lines": max(1, int(raw.get("pattern_max_lines") or original.get("pattern_max_lines") or (tmpl.get("max_lines") if tmpl else 2))),
         })
     result.sort(key=lambda x: x["start"])
     return result
@@ -1460,20 +1576,16 @@ async def render_editor(request: dict):
         raise HTTPException(status_code=404, detail="Editor session expired. Please process the video again.")
 
     try:
-        chunks = _safe_editor_chunks(request.get("chunks", []), session["chunks"])
+        session_template = session.get("template")
+        template_id = str(session.get("template_id") or (session_template.get("id") if isinstance(session_template, dict) else "bold_white"))
+        template = session_template if isinstance(session_template, dict) else get_template_object(template_id)
+        style = dict(template)
+
+        chunks = _safe_editor_chunks(request.get("chunks", []), session.get("chunks", []), template)
         if not chunks:
             raise HTTPException(status_code=400, detail="Add at least one caption before exporting.")
-        requested_template = request.get("template")
-        req_id = None
-        if isinstance(requested_template, dict):
-            req_id = str(requested_template.get("id", ""))
-        elif isinstance(requested_template, str) and requested_template:
-            req_id = requested_template
 
-        session_template = session.get("template")
-        template_id = str(session.get("template_id") or (session_template.get("id") if isinstance(session_template, dict) else req_id) or "bold_white")
-        template = get_template_object(template_id)
-        style = dict(template)
+        render_chunks = prepare_render_chunks(chunks, template)
 
         try:
             req_size = int(request.get("font_size", 0))
@@ -1502,7 +1614,7 @@ async def render_editor(request: dict):
         subtitle_path = workdir / "edited-captions.ass"
         output_path = workdir / f"captioned-edited-{uuid.uuid4().hex[:8]}.mp4"
         video_width, video_height = probe_video_dimensions(input_path)
-        write_ass(chunks, subtitle_path, font_size, position_percent, style, video_width, video_height, template)
+        write_ass(render_chunks, subtitle_path, font_size, position_percent, style, video_width, video_height, template)
         run_ffmpeg(input_path, subtitle_path, output_path, audio_volume)
 
         filename = Path(session["filename"]).stem + "-edited.mp4"

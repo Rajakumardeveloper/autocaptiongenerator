@@ -158,7 +158,8 @@ input[type=range] { width:100%; accent-color:var(--accent); }
   flex-direction: column;
   align-items: center;
   text-align: center;
-  line-height: .92;
+  line-height: var(--line-height, .92);
+  letter-spacing: var(--letter-spacing, normal);
   white-space: normal;
   pointer-events: none;
   box-sizing: border-box;
@@ -179,6 +180,13 @@ input[type=range] { width:100%; accent-color:var(--accent); }
 }
 .editor-caption-overlay .tracked-word {
   display: inline !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  font-style: inherit !important;
+  letter-spacing: inherit !important;
+  text-transform: inherit !important;
+  color: inherit !important;
   text-decoration: none !important;
   text-decoration-line: none !important;
   border: 0 !important;
@@ -304,14 +312,14 @@ input[type=range] { width:100%; accent-color:var(--accent); }
 }
 
 /* Stable editor typography and dynamic font-size variables */
-.editor-caption-overlay span {
+.editor-caption-overlay .caption-line > span {
   font-size: calc(var(--caption-font-size, 26px) * var(--span-scale, 0.65));
 }
-.editor-caption-overlay strong {
+.editor-caption-overlay .caption-line > strong {
   font-size: var(--caption-font-size, 26px);
 }
-.editor-caption-overlay.single-tier span,
-.editor-caption-overlay.single-tier strong {
+.editor-caption-overlay.single-tier .caption-line > span,
+.editor-caption-overlay.single-tier .caption-line > strong {
   font-size: var(--caption-font-size, 26px);
 }
 
@@ -324,6 +332,7 @@ input[type=range] { width:100%; accent-color:var(--accent); }
 }
 .editor-caption-overlay .tracked-word.word-active {
   filter: brightness(1.15);
+  color: var(--highlight-color, inherit);
 }
 
 /* Template Active Highlights */
