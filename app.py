@@ -27,7 +27,7 @@ STATIC_DIR = BASE_DIR / "static"
 
 # Small is a practical CPU default. You can set WHISPER_MODEL=medium or
 # WHISPER_MODEL=large-v3 before starting the app when you want higher accuracy.
-MODEL_SIZE = os.getenv("WHISPER_MODEL", "medium")
+MODEL_SIZE = os.getenv("WHISPER_MODEL", "base" if os.getenv("RENDER") else "medium")
 DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
 COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "500"))
