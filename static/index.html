@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI auto captions for English, Hindi and Hinglish creator videos.">
+  <title>AutoCaption AI — Pro Creator Captions</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <nav class="nav">
+      <a class="brand" href="/">AutoCaption<span>AI</span></a>
+      <span class="badge">PRO</span>
+    </nav>
+
+    <section class="hero">
+      <div class="eyebrow">AI-powered multilingual creator captions</div>
+      <h1>Make captions that <span>look edited.</span></h1>
+      <p>Upload your video, choose a creator template, then check and correct every caption before exporting.</p>
+    </section>
+
+    <section class="card">
+      <form id="captionForm">
+        <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Choose video">
+          <input id="videoInput" name="video" type="file" accept="video/*" hidden required>
+          <div class="upload-icon">↑</div>
+          <div class="drop-title">Drop your video here</div>
+          <div class="drop-subtitle">or click to choose a file</div>
+          <div class="file-pill" id="filePill" hidden></div>
+        </div>
+
+        <section class="source-preview" id="sourcePreviewWrap" hidden>
+          <div class="source-preview-head">
+            <div>
+              <strong>Video preview</strong>
+              <span>Play the original video and adjust the preview volume.</span>
+            </div>
+            <div class="audio-tools">
+              <button class="audio-button" id="sourceAudioBtn" type="button">Play with audio</button>
+              <label class="mini-volume">
+                <span>Volume <b id="sourceVolumeValue">100%</b></span>
+                <input id="sourceVolume" type="range" min="0" max="100" value="100">
+              </label>
+            </div>
+          </div>
+          <div class="preview-stage" id="previewStage">
+            <video id="sourcePreview" controls playsinline preload="metadata"></video>
+            <div class="caption-overlay t-bold-white" id="captionOverlay">
+              <span>Hello guys</span>
+              <strong>kese ho?</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="templates-wrap">
+          <div class="section-heading">
+            <div>
+              <h2>Caption templates</h2>
+              <p>Each template carries its complete typography, color, effects, highlight, animation and caption rhythm into the editor and final MP4.</p>
+            </div>
+            <span class="template-count">28 presets</span>
+          </div>
+          <div class="template-browser-controls">
+            <div class="template-filters" role="tablist" aria-label="Template categories">
+              <button class="template-filter active" data-category="all" type="button">All</button>
+              <button class="template-filter" data-category="Built-in Templates" type="button">Built-in Templates</button>
+              <button class="template-filter" data-category="Static Captions" type="button">Static Captions</button>
+              <button class="template-filter" data-category="Dynamic Captions" type="button">Dynamic Captions</button>
+              <button class="template-filter" data-category="AI / Creator Templates" type="button">AI / Creator</button>
+            </div>
+            <input id="templateSearch" class="template-search" type="search" placeholder="Search templates…" autocomplete="off">
+          </div>
+          <div id="templateGrid" class="template-grid"></div>
+        </section>
+
+        <section class="settings-panel">
+          <div class="section-heading compact">
+            <div>
+              <h2>Language & caption controls</h2>
+              <p>Built for English, Hindi and code-switched Hinglish speech.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <label class="field">
+              <span>Caption language</span>
+              <select id="language" name="language">
+                <option value="auto">Auto — English + Hindi + Hinglish</option>
+                <option value="hinglish" selected>Hinglish — Roman Hindi + English</option>
+                <option value="hi">Hindi — Devanagari</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Quick position</span>
+              <select id="positionPreset">
+                <option value="bottom">Bottom</option>
+                <option value="lower">Lower center</option>
+                <option value="center">Center</option>
+                <option value="upper">Upper center</option>
+                <option value="top">Top</option>
+              </select>
+            </label>
+
+            <label class="field range-field">
+              <span>Text size <strong id="fontSizeValue">54</strong></span>
+              <input id="fontSize" type="range" min="34" max="78" value="54">
+            </label>
+
+            <label class="field position-field">
+              <span>Caption position <strong id="positionValue">78%</strong></span>
+              <div class="position-control">
+                <div class="position-track-labels"><span>TOP</span><span>BOTTOM</span></div>
+                <input id="positionRange" class="vertical-range" type="range" min="10" max="90" value="78">
+              </div>
+            </label>
+
+            <label class="field wide-field">
+              <span>Optional word hints</span>
+              <input id="hotwords" type="text" maxlength="1000" placeholder="Names, brands, slang or technical words">
+              <small>Example: OpenAI, Instagram, bhai, kese, marketing</small>
+            </label>
+
+            <label class="field range-field">
+              <span>Export audio <strong id="exportVolumeValue">100%</strong></span>
+              <input id="exportVolume" type="range" min="0" max="200" value="100">
+            </label>
+          </div>
+        </section>
+
+        <button class="primary" id="submitBtn" type="submit" disabled>
+          <span id="submitText">Generate captions</span>
+          <span class="spinner" id="spinner" hidden></span>
+        </button>
+      </form>
+
+      <div class="progress-wrap" id="progressWrap" hidden>
+        <div class="progress-copy">
+          <strong id="progressTitle">Uploading video…</strong>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+        <p>Speech is transcribed, caption phrases are timed, then the selected style is burned into the MP4.</p>
+      </div>
+
+
+      <section class="caption-editor" id="captionEditor" hidden>
+        <div class="editor-head">
+          <div>
+            <div class="eyebrow">STEP 2 · CAPTION EDITOR</div>
+            <h2>Watch your video and fix captions</h2>
+            <p><strong>Watch → find the wrong word → click its word chip → correct it → continue.</strong><br>Whisper's original word timing stays attached when you correct a word. The final MP4 is rendered only once, after you finish editing.</p>
+          </div>
+          <div class="editor-status" id="editorStatus">0 captions</div>
+        </div>
+
+        <div class="editor-video-card">
+          <div class="editor-video-stage" id="editorVideoStage">
+            <video id="editorVideo" controls playsinline preload="metadata"></video>
+            <div class="editor-caption-overlay t-bold-white" id="editorCaptionOverlay" hidden></div>
+          </div>
+          <div class="editor-video-tools">
+            <button class="audio-button" id="editorPlayBtn" type="button">Play with audio</button>
+            <label class="mini-volume"><span>Volume <b id="editorVolumeValue">100%</b></span><input id="editorVolume" type="range" min="0" max="100" value="100"></label>
+            <label class="mini-speed"><span>Speed:</span>
+              <select id="editorSpeed" class="editor-mini-select">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+              </select>
+            </label>
+            <span class="editor-time" id="editorTime">00:00.0</span>
+          </div>
+        </div>
+
+        <div class="editor-toolbar">
+          <label class="editor-tool-picker">
+            <span>Template:</span>
+            <select id="editorTemplateSelect" class="editor-select"></select>
+          </label>
+          <label class="editor-tool-slider">
+            <span>Size: <b id="editorFontSizeVal">54px</b></span>
+            <input id="editorFontSizeRange" type="range" min="32" max="80" value="54">
+          </label>
+          <label class="editor-tool-slider">
+            <span>Position: <b id="editorPosVal">78%</b></span>
+            <input id="editorPosRange" type="range" min="10" max="90" value="78">
+          </label>
+          <button class="secondary small-btn" id="addCaptionBtn" type="button">＋ Add caption</button>
+          <button class="secondary small-btn" id="resetCaptionsBtn" type="button">↺ Reset edits</button>
+          <span class="editor-hint">🎯 The active word is highlighted. Click a word chip to jump.</span>
+        </div>
+
+        <div class="caption-list" id="captionList"></div>
+
+        <div class="editor-bottom-actions">
+          <button class="secondary" id="backToSettingsBtn" type="button">← Back</button>
+          <button class="primary" id="renderEditedBtn" type="button"><span id="renderEditedText">Render corrected video</span><span class="spinner" id="renderSpinner" hidden></span></button>
+        </div>
+      </section>
+
+      <div class="result" id="result" hidden>
+        <div class="success-icon">✓</div>
+        <h2>Your corrected video is ready</h2>
+        <p id="detectedLanguage"></p>
+        <div class="result-video-wrap">
+          <video id="resultVideo" controls playsinline preload="metadata"></video>
+          <div class="result-volume-row">
+            <button class="audio-button" id="resultAudioBtn" type="button">Play with audio</button>
+            <label class="mini-volume">
+              <span>Volume <b id="resultVolumeValue">100%</b></span>
+              <input id="resultVolume" type="range" min="0" max="100" value="100">
+            </label>
+          </div>
+        </div>
+        <div class="result-actions">
+          <a class="primary link-button" id="downloadBtn" download>Download video</a>
+          <button class="secondary" id="startOverBtn" type="button">Caption another</button>
+        </div>
+      </div>
+
+      <div class="error" id="errorBox" role="alert" hidden></div>
+    </section>
+
+    <section class="steps">
+      <article><span>01</span><h3>Listen</h3><p>Preview your source video with volume control.</p></article>
+      <article><span>02</span><h3>Style</h3><p>Pick a template and move the captions vertically.</p></article>
+      <article><span>03</span><h3>Export</h3><p>Get a styled MP4 with the original audio preserved.</p></article>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
