@@ -600,33 +600,92 @@ form.addEventListener('submit', event => {
   data.append('audio_volume', exportVolume.value);
   data.append('hotwords', hotwords.value.trim());
 
+  let stageTimer = null;
+  const stages = [
+    'AI is extracting audio…',
+    'AI is transcribing speech…',
+    'Detecting words and timestamps…',
+    'Applying template styling…',
+    'Opening caption editor…'
+  ];
+  let stageIdx = 0;
+
+  const cleanupSubmission = () => {
+    if (stageTimer) {
+      clearInterval(stageTimer);
+      stageTimer = null;
+    }
+    spinner.hidden = true;
+    submitText.textContent = 'Generate captions';
+    submitBtn.disabled = !videoInput.files[0];
+  };
+
   const xhr = new XMLHttpRequest();
   xhr.open('POST', '/api/caption');
   xhr.responseType = 'json';
+  xhr.timeout = 240000; // 4 minute timeout
+
   xhr.upload.onprogress = e => {
     if (!e.lengthComputable) return;
     const pct = Math.round((e.loaded / e.total) * 100);
     progressPercent.textContent = `${pct}%`;
     progressBar.style.width = `${pct}%`;
     if (pct >= 100) {
-      progressTitle.textContent = 'AI is transcribing your captions…';
+      progressTitle.textContent = 'AI is processing audio…';
       progressPercent.textContent = 'Working';
+      progressBar.style.width = '100%';
+      if (!stageTimer) {
+        stageTimer = setInterval(() => {
+          if (stageIdx < stages.length) {
+            progressTitle.textContent = stages[stageIdx++];
+          }
+        }, 3200);
+      }
     }
   };
+
   xhr.onload = () => {
-    spinner.hidden = true;
-    submitText.textContent = 'Generate captions';
-    if (xhr.status >= 200 && xhr.status < 300 && xhr.response) {
-      openCaptionEditor(xhr.response);
+    cleanupSubmission();
+    let res = xhr.response;
+    if (typeof res === 'string') {
+      try { res = JSON.parse(res); } catch (_) {}
+    }
+    if (xhr.status >= 200 && xhr.status < 300 && res) {
+      try {
+        openCaptionEditor(res);
+      } catch (editorErr) {
+        console.error('Caption editor load error:', editorErr);
+        showError('Transcription completed, but failed to load the editor: ' + (editorErr.message || editorErr));
+        resetProcessingState();
+      }
     } else {
-      showError((xhr.response && xhr.response.detail) || 'Something went wrong while transcribing the video.');
+      let errMsg = 'Something went wrong while transcribing the video.';
+      if (res && res.detail) {
+        errMsg = typeof res.detail === 'string' ? res.detail : JSON.stringify(res.detail);
+      } else if (xhr.status === 413) {
+        errMsg = 'The uploaded video is too large. Please upload a smaller clip.';
+      } else if (xhr.status === 504 || xhr.status === 502) {
+        errMsg = 'The server timed out or restarted while transcribing. Please try a shorter video or check server logs.';
+      } else if (xhr.statusText) {
+        errMsg = `Server error (${xhr.status}): ${xhr.statusText}`;
+      }
+      showError(errMsg);
       resetProcessingState();
     }
   };
+
   xhr.onerror = () => {
+    cleanupSubmission();
     showError('Network error. Make sure the server is running and try again.');
     resetProcessingState();
   };
+
+  xhr.ontimeout = () => {
+    cleanupSubmission();
+    showError('Transcription timed out. The server took too long to process the video. Try a shorter clip.');
+    resetProcessingState();
+  };
+
   xhr.send(data);
 });
 
@@ -1219,8 +1278,17 @@ function resetProcessingState() {
   submitBtn.disabled = !videoInput.files[0];
   progressWrap.hidden = true;
 }
-function showError(message) { errorBox.textContent = message; errorBox.hidden = false; }
-function hideError() { errorBox.hidden = true; errorBox.textContent = ''; }
+function showError(message) {
+  errorBox.textContent = message;
+  errorBox.hidden = false;
+  try {
+    errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (_) {}
+}
+function hideError() {
+  errorBox.hidden = true;
+  errorBox.textContent = '';
+}
 
 startOverBtn.addEventListener('click', () => {
   captionEditor.hidden = true; editorSessionId = null; editorChunks = []; originalEditorChunks = []; activeCaptionId = null; lastOverlaySignature = ""; currentAnimatedChunkId = null;

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 from faster_whisper import WhisperModel
@@ -25,14 +25,43 @@ os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
-# Small is a practical CPU default. You can set WHISPER_MODEL=medium or
-# WHISPER_MODEL=large-v3 before starting the app when you want higher accuracy.
-MODEL_SIZE = os.getenv("WHISPER_MODEL", "base" if os.getenv("RENDER") else "medium")
+# Detect if running in cloud / container environments (Render, Railway, Fly, HuggingFace, Docker)
+is_cloud = bool(
+    os.getenv("RENDER")
+    or os.getenv("RENDER_SERVICE_ID")
+    or os.getenv("RAILWAY_ENVIRONMENT")
+    or os.getenv("FLY_APP_NAME")
+    or os.getenv("SPACE_ID")
+    or (os.getenv("PORT") and not os.getenv("WHISPER_MODEL"))
+)
+# "base" for cloud/free-tier (uses <300MB RAM, fast), "small" for local default (accurate & fast).
+default_model = "base" if is_cloud else "small"
+MODEL_SIZE = os.getenv("WHISPER_MODEL", default_model)
 DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
 COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "500"))
 
 app = FastAPI(title="AutoCaption AI")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    ico_path = STATIC_DIR / "favicon.ico"
+    if ico_path.exists():
+        return FileResponse(ico_path, media_type="image/x-icon")
+    svg_path = STATIC_DIR / "favicon.svg"
+    if svg_path.exists():
+        return FileResponse(svg_path, media_type="image/svg+xml")
+    return Response(status_code=204)
+
+
+@app.get("/favicon.svg", include_in_schema=False)
+async def favicon_svg():
+    svg_path = STATIC_DIR / "favicon.svg"
+    if svg_path.exists():
+        return FileResponse(svg_path, media_type="image/svg+xml")
+    return Response(status_code=204)
+
 
 model = WhisperModel(
     MODEL_SIZE,
@@ -1370,20 +1399,27 @@ async def caption_video(
         if requested_mode not in {"auto", "hinglish", "hi", "en"}:
             requested_mode = "auto"
 
+        is_cpu = (DEVICE.lower() == "cpu")
+        default_beam = 1 if is_cpu else 5
+        beam_size = int(os.getenv("WHISPER_BEAM_SIZE", str(default_beam)))
+        best_of = int(os.getenv("WHISPER_BEST_OF", str(default_beam)))
+        patience = float(os.getenv("WHISPER_PATIENCE", "1.0"))
+        condition_on_prev = os.getenv("WHISPER_CONDITION_ON_PREV", "false").lower() in {"true", "1", "yes"}
+
         transcribe_kwargs = {
-            "beam_size": 8,
-            "best_of": 5,
-            "patience": 1.2,
+            "beam_size": beam_size,
+            "best_of": best_of,
+            "patience": patience,
             "temperature": 0.0,
             "compression_ratio_threshold": 2.4,
             "log_prob_threshold": -1.0,
             "no_speech_threshold": 0.55,
             "vad_filter": True,
-            "vad_parameters": {"min_silence_duration_ms": 350, "speech_pad_ms": 180},
-            "condition_on_previous_text": True,
+            "vad_parameters": {"min_silence_duration_ms": 300, "speech_pad_ms": 150},
+            "condition_on_previous_text": condition_on_prev,
             "word_timestamps": True,
             "multilingual": True,
-            "language_detection_segments": 5,
+            "language_detection_segments": 2,
             "language_detection_threshold": 0.35,
             "initial_prompt": (
                 "Indian creator speech. Hindi, English and Hinglish can be mixed. "
