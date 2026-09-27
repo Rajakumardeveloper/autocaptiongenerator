@@ -59,7 +59,7 @@
               <h2>Caption templates</h2>
               <p>Each template carries its complete typography, color, effects, highlight, animation and caption rhythm into the editor and final MP4.</p>
             </div>
-            <span class="template-count">28 presets</span>
+            <span class="template-count" id="templateCountBadge">38 presets</span>
           </div>
           <div class="template-browser-controls">
             <div class="template-filters" role="tablist" aria-label="Template categories">
@@ -177,10 +177,12 @@
         </div>
 
         <div class="editor-toolbar">
-          <label class="editor-tool-picker">
-            <span>Template:</span>
-            <select id="editorTemplateSelect" class="editor-select"></select>
-          </label>
+          <div class="editor-locked-badge" title="Template is locked for the entire workflow">
+            <span class="locked-icon">🔒</span>
+            <span class="locked-label">Template:</span>
+            <strong id="editorLockedTemplateName">Bold White</strong>
+            <span class="locked-tag">LOCKED</span>
+          </div>
           <label class="editor-tool-slider">
             <span>Size: <b id="editorFontSizeVal">54px</b></span>
             <input id="editorFontSizeRange" type="range" min="32" max="80" value="54">

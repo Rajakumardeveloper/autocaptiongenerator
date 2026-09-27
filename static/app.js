@@ -63,6 +63,7 @@ let originalEditorChunks = [];
 let editorSourceUrl = null;
 let activeCaptionId = null;
 let lastOverlaySignature = "";
+let currentAnimatedChunkId = null;
 
 const TEMPLATE_VISUALS = {
   // These values mirror the original V6 template CSS. The editor uses the
@@ -193,8 +194,14 @@ function templateById(id) { return templates.find(t => t.id === id) || templates
 
 function mergeServerTemplates(serverTemplates) {
   if (!Array.isArray(serverTemplates) || !serverTemplates.length) return;
-  const byId = new Map(serverTemplates.map(t => [t.id, t]));
-  templates.forEach(t => Object.assign(t, byId.get(t.id) || {}));
+  const byId = new Map(templates.map(t => [t.id, t]));
+  serverTemplates.forEach(st => {
+    if (byId.has(st.id)) {
+      Object.assign(byId.get(st.id), st);
+    } else {
+      templates.push(st);
+    }
+  });
   selectedTemplateObject = templateById(selectedTemplate);
   renderTemplates();
   applyPreviewTemplate();
@@ -230,23 +237,21 @@ function renderTemplates() {
     </label>
   `).join('') || `<div class="template-empty">No templates match your search.</div>`;
 
-  const editorSelect = document.getElementById('editorTemplateSelect');
-  if (editorSelect) {
-    const curVal = editorSelect.value || selectedTemplate;
-    editorSelect.innerHTML = templates.map(t =>
-      `<option value="${t.id}" ${t.id === curVal ? 'selected' : ''}>${t.name} (${t.tag || 'Style'})</option>`
-    ).join('');
+  const lockedNameEl = document.getElementById('editorLockedTemplateName');
+  if (lockedNameEl) {
+    const currentTmpl = templateById(editorTemplateId || selectedTemplate);
+    lockedNameEl.textContent = currentTmpl?.name || editorTemplateId || selectedTemplate;
   }
 }
 
 templateGrid.addEventListener('change', event => {
   if (event.target.name !== 'template') return;
+  // If caption editor is active, template is strictly locked
+  if (!captionEditor.hidden) return;
   selectedTemplate = event.target.value;
   selectedTemplateObject = templateById(selectedTemplate);
   document.querySelectorAll('.template-card').forEach(card => card.classList.remove('selected'));
   event.target.closest('.template-card').classList.add('selected');
-  const editorSelect = document.getElementById('editorTemplateSelect');
-  if (editorSelect) editorSelect.value = selectedTemplate;
   const tmplPos = selectedTemplateObject?.position || 'lower';
   positionRange.value = tmplPos === 'center' ? 50 : (tmplPos === 'top' ? 18 : 78);
   positionValue.textContent = `${positionRange.value}%`;
@@ -256,31 +261,6 @@ templateGrid.addEventListener('change', event => {
   if (posVal) posVal.textContent = `${positionRange.value}%`;
   applyPreviewTemplate();
   applyPreviewPosition();
-  if (!captionEditor.hidden) { editorTemplateId = selectedTemplate; editorTemplateObject = selectedTemplateObject; updateEditorOverlay(); }
-});
-
-document.getElementById('editorTemplateSelect')?.addEventListener('change', event => {
-  selectedTemplate = event.target.value;
-  selectedTemplateObject = templateById(selectedTemplate);
-  editorTemplateId = selectedTemplate;
-  editorTemplateObject = selectedTemplateObject;
-  document.querySelectorAll('.template-card').forEach(card => {
-    const radio = card.querySelector('input[name="template"]');
-    if (radio) {
-      radio.checked = radio.value === selectedTemplate;
-      card.classList.toggle('selected', radio.value === selectedTemplate);
-    }
-  });
-  const tmplPos = selectedTemplateObject?.position || 'lower';
-  positionRange.value = tmplPos === 'center' ? 50 : (tmplPos === 'top' ? 18 : 78);
-  positionValue.textContent = `${positionRange.value}%`;
-  const posRange = document.getElementById('editorPosRange');
-  const posVal = document.getElementById('editorPosVal');
-  if (posRange) posRange.value = positionRange.value;
-  if (posVal) posVal.textContent = `${positionRange.value}%`;
-  applyPreviewTemplate();
-  applyPreviewPosition();
-  updateEditorOverlay();
 });
 
 document.getElementById('templateSearch')?.addEventListener('input', renderTemplates);
@@ -484,8 +464,17 @@ function applyPreviewTemplate() {
   const template = templateById(selectedTemplate);
   selectedTemplateObject = template;
   captionOverlay.className = `caption-overlay ${template.css_class || template.cls || ''}`;
-  captionOverlay.innerHTML = `<span>${esc(template.preview_a || template.a || 'CAPTION')}</span>${(template.preview_b || template.b) ? `<strong>${esc(template.preview_b || template.b)}</strong>` : ''}`;
-  captionOverlay.style.fontSize = `${Math.max(12, Number(fontSize.value) * 0.42)}px`;
+  if (template.max_lines === 1 || Number(template.span_scale || 0.65) >= 0.95) {
+    captionOverlay.classList.add('single-tier');
+  } else {
+    captionOverlay.classList.remove('single-tier');
+  }
+  const previewA = template.preview_a || template.a || 'CAPTION';
+  const previewB = template.preview_b || template.b || '';
+  captionOverlay.innerHTML = `<span>${esc(previewA)}</span>${previewB ? `<strong>${esc(previewB)}</strong>` : ''}`;
+  const basePx = Math.max(16, Math.round(Number(template.font_size || 52) * 0.5 * (Number(fontSize.value || 54) / 54.0)));
+  captionOverlay.style.setProperty('--caption-font-size', `${basePx}px`);
+  captionOverlay.style.setProperty('--span-scale', template.span_scale || (template.max_lines === 1 ? '1.0' : '0.65'));
 }
 
 form.addEventListener('submit', event => {
@@ -581,8 +570,10 @@ function openCaptionEditor(data) {
   positionValue.textContent = `${positionRange.value}%`;
   exportVolume.value = data.audio_volume ?? exportVolume.value;
   exportVolumeValue.textContent = `${exportVolume.value}%`;
-  const editorSelect = document.getElementById('editorTemplateSelect');
-  if (editorSelect) editorSelect.value = selectedTemplate;
+  const lockedNameEl = document.getElementById('editorLockedTemplateName');
+  if (lockedNameEl) {
+    lockedNameEl.textContent = selectedTemplateObject?.name || selectedTemplate;
+  }
   const editorFSRange = document.getElementById('editorFontSizeRange');
   const editorFSVal = document.getElementById('editorFontSizeVal');
   if (editorFSRange) editorFSRange.value = fontSize.value;
@@ -609,6 +600,7 @@ function openCaptionEditor(data) {
   result.hidden = true;
   captionEditor.hidden = false;
   editorStatus.textContent = `${editorChunks.length} captions`;
+  currentAnimatedChunkId = null;
   renderCaptionRows();
   updateEditorOverlay();
   hideError();
@@ -792,24 +784,24 @@ function getVideoContentRect() {
   };
 }
 
-function positionEditorCaption(contentRect, positionPercent, scale=1) {
+function positionEditorCaption(contentRect, positionPercent) {
   if (!contentRect) return;
   const centerX = contentRect.left + contentRect.width / 2;
   const desiredY = contentRect.top + contentRect.height * (Number(positionPercent) / 100);
 
   editorCaptionOverlay.style.left = `${centerX}px`;
   editorCaptionOverlay.style.top = `${desiredY}px`;
-  editorCaptionOverlay.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  editorCaptionOverlay.style.transform = 'translate(-50%, -50%)';
   editorCaptionOverlay.style.transformOrigin = 'center center';
   editorCaptionOverlay.style.textAlign = 'center';
   editorCaptionOverlay.style.width = 'max-content';
-  editorCaptionOverlay.style.maxWidth = `${Math.max(120, Math.round((contentRect.width - 24) / Math.max(0.1, scale)))}px`;
+  editorCaptionOverlay.style.maxWidth = `${Math.max(120, Math.round(contentRect.width * 0.92))}px`;
   editorCaptionOverlay.style.padding = '0';
   editorCaptionOverlay.style.boxSizing = 'border-box';
   editorCaptionOverlay.style.zoom = '';
 }
 
-function clampEditorCaptionToVideo(contentRect, scale=1) {
+function clampEditorCaptionToVideo(contentRect) {
   if (!contentRect) return;
   const stage = document.getElementById('editorVideoStage');
   if (!stage) return;
@@ -826,7 +818,7 @@ function clampEditorCaptionToVideo(contentRect, scale=1) {
   const maxY = contentRect.top + contentRect.height - halfH - margin;
   const safeY = Math.min(Math.max(currentTop, minY), Math.max(minY, maxY));
   editorCaptionOverlay.style.top = `${safeY}px`;
-  editorCaptionOverlay.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  editorCaptionOverlay.style.transform = 'translate(-50%, -50%)';
   editorCaptionOverlay.style.zoom = '';
 }
 
@@ -854,11 +846,11 @@ function updateEditorOverlay() {
   }
   if (!c) {
     editorCaptionOverlay.hidden = true;
+    currentAnimatedChunkId = null;
     return;
   }
 
-  const template = editorTemplateObject || selectedTemplateObject || templateById(selectedTemplate);
-  const visual = TEMPLATE_VISUALS[selectedTemplate] || TEMPLATE_VISUALS.bold_white;
+  const template = editorTemplateObject || selectedTemplateObject || templateById(editorTemplateId || selectedTemplate);
   const words = Array.isArray(c.words) && c.words.length
     ? c.words
     : c.text.split(/\s+/).filter(Boolean).map((word, i, arr) => ({
@@ -871,6 +863,26 @@ function updateEditorOverlay() {
 
   editorCaptionOverlay.hidden = false;
   editorCaptionOverlay.className = `editor-caption-overlay ${template.css_class || template.cls || ''}`;
+  if (template.max_lines === 1 || Number(template.span_scale || 0.65) >= 0.95) {
+    editorCaptionOverlay.classList.add('single-tier');
+  } else {
+    editorCaptionOverlay.classList.remove('single-tier');
+  }
+
+  // Animation synchronized to caption chunk
+  if (c.id !== currentAnimatedChunkId) {
+    currentAnimatedChunkId = c.id;
+    const animName = template.animation || 'pop';
+    const animClass = animName === 'bounce' ? 'anim-bounce'
+                    : animName === 'scale_in' ? 'anim-scale-in'
+                    : animName === 'slide' ? 'anim-slide'
+                    : animName === 'fade' ? 'anim-fade'
+                    : animName === 'glow_pulse' ? 'anim-glow-pulse'
+                    : 'anim-pop';
+    editorCaptionOverlay.classList.remove('anim-pop', 'anim-bounce', 'anim-scale-in', 'anim-slide', 'anim-fade', 'anim-glow-pulse');
+    void editorCaptionOverlay.offsetWidth;
+    editorCaptionOverlay.classList.add(animClass);
+  }
 
   if (signature !== lastOverlaySignature) {
     lastOverlaySignature = signature;
@@ -919,17 +931,17 @@ function updateEditorOverlay() {
   const contentRect = getVideoContentRect();
   if (!contentRect) return;
 
-  const baseCanvasWidth = 320;
-  const templateScale = Math.max(0.85, Math.min(2.5, contentRect.width / baseCanvasWidth));
-  const userScale = Math.max(0.7, Math.min(1.4, Number(fontSize.value || 54) / 54));
-  const finalScale = templateScale * userScale;
+  // Exact 1:1 proportional sizing synchronized with ASS canvas (720px base)
+  const baseCanvasWidth = 720.0;
+  const tmplFontSize = Number(template.font_size || 52);
+  const userScale = Number(fontSize.value || 54) / 54.0;
+  const computedFontSize = contentRect.width * (tmplFontSize / baseCanvasWidth) * userScale;
 
-  editorCaptionOverlay.style.fontSize = '';
-  editorCaptionOverlay.style.lineHeight = '';
-  editorCaptionOverlay.style.zoom = '';
+  editorCaptionOverlay.style.setProperty('--caption-font-size', `${Math.max(12, computedFontSize)}px`);
+  editorCaptionOverlay.style.setProperty('--span-scale', template.span_scale || (template.max_lines === 1 ? '1.0' : '0.65'));
 
-  positionEditorCaption(contentRect, positionRange.value, finalScale);
-  requestAnimationFrame(() => clampEditorCaptionToVideo(contentRect, finalScale));
+  positionEditorCaption(contentRect, positionRange.value);
+  requestAnimationFrame(() => clampEditorCaptionToVideo(contentRect));
 
   const row = document.querySelector(`.caption-row[data-id="${c.id}"]`);
   if (row) row.querySelectorAll('.word-chip').forEach((chip, i) => chip.classList.toggle('speaking', i === activeWord));
@@ -1103,7 +1115,7 @@ function showError(message) { errorBox.textContent = message; errorBox.hidden = 
 function hideError() { errorBox.hidden = true; errorBox.textContent = ''; }
 
 startOverBtn.addEventListener('click', () => {
-  captionEditor.hidden = true; editorSessionId = null; editorChunks = []; originalEditorChunks = []; activeCaptionId = null; lastOverlaySignature = "";
+  captionEditor.hidden = true; editorSessionId = null; editorChunks = []; originalEditorChunks = []; activeCaptionId = null; lastOverlaySignature = ""; currentAnimatedChunkId = null;
   editorVideo.removeAttribute('src'); editorVideo.load();
   if (resultUrl) { URL.revokeObjectURL(resultUrl); resultUrl = null; }
   resultVideo.removeAttribute('src');

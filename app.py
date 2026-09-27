@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import tempfile
 import uuid
+import mimetypes
 from pathlib import Path
 from typing import Optional
 
@@ -45,236 +46,274 @@ EDITOR_SESSIONS = {}
 
 
 # =========================================================
-# CREATOR CAPTION TEMPLATES
+# CREATOR CAPTION TEMPLATES — CANONICAL DEFINITIONS
 # =========================================================
 
 CAPTION_TEMPLATES = {
     "bold_white": dict(
         font_name="Impact", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=2, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=0.62,
     ),
     "white_yellow": dict(
         font_name="Impact", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFE600",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=2, bold=True, italic=False, font_size=58, border_style=1, highlight=True,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=True,
         highlight_color="#FFE600", span_scale=0.62,
     ),
     "yellow_glow": dict(
         font_name="Impact", text_color="#FFE600", line1_color="#FFE600", line2_color="#FFE600",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=4, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#806C00", outline_width=2,
+        shadow_distance=0, shadow_color="", glow=True, glow_color="#FFE600", glow_size=9,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "creator_bold": dict(
         font_name="Impact", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=6,
-        shadow=3, bold=True, italic=False, font_size=64, border_style=1, highlight=True,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=64, border_style=1, highlight=True,
         highlight_color="#FFD400", span_scale=1.0,
     ),
     "clean_white": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#BBBBBB", line2_color="#FFFFFF",
-        background_color="#000000", background_opacity=0, outline_color="#111111", outline_width=2,
-        shadow=2, bold=False, italic=False, font_size=52, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#111111", outline_width=1.5,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=False, italic=False, font_size=52, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=0.72,
     ),
     "yellow_bold": dict(
         font_name="Impact", text_color="#FFD800", line1_color="#FFD800", line2_color="#FFD800",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=5,
-        shadow=2, bold=True, italic=False, font_size=60, border_style=1, highlight=False,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=60, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "black_box": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#000000", background_opacity=88, outline_color="#000000", outline_width=0,
-        shadow=0, bold=True, italic=False, font_size=52, border_style=3, highlight=True,
+        background_color="#000000", background_opacity=90, outline_color="#000000", outline_width=0,
+        shadow_distance=0, shadow_color="", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=52, border_style=3, highlight=True,
         highlight_color="#FFE600", span_scale=1.0,
     ),
     "white_box": dict(
         font_name="Arial", text_color="#111111", line1_color="#111111", line2_color="#111111",
-        background_color="#FFFFFF", background_opacity=92, outline_color="#FFFFFF", outline_width=0,
-        shadow=0, bold=True, italic=False, font_size=50, border_style=3, highlight=False,
+        background_color="#FFFFFF", background_opacity=94, outline_color="#FFFFFF", outline_width=0,
+        shadow_distance=0, shadow_color="", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=50, border_style=3, highlight=False,
         highlight_color="#111111", span_scale=1.0,
     ),
     "red_alert": dict(
         font_name="Impact", text_color="#FF3B30", line1_color="#FF3B30", line2_color="#FF3B30",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=2, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "cyan_pop": dict(
         font_name="Impact", text_color="#35E7FF", line1_color="#35E7FF", line2_color="#35E7FF",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=3, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#002B36", outline_width=4,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "blue_electric": dict(
         font_name="Arial", text_color="#4EA1FF", line1_color="#4EA1FF", line2_color="#4EA1FF",
-        background_color="#000000", background_opacity=0, outline_color="#081B4A", outline_width=4,
-        shadow=4, bold=True, italic=False, font_size=56, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#081B4A", outline_width=3.5,
+        shadow_distance=4, shadow_color="#081B4A", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=56, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "pink_creator": dict(
         font_name="Impact", text_color="#FF5FD7", line1_color="#FF5FD7", line2_color="#FF5FD7",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=3, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#38002B", outline_width=4,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "soft_aesthetic": dict(
         font_name="Georgia", text_color="#F4F0EA", line1_color="#C8C0B5", line2_color="#F4F0EA",
-        background_color="#303030", background_opacity=0, outline_color="#555555", outline_width=1,
-        shadow=2, bold=False, italic=True, font_size=48, border_style=1, highlight=False,
+        background_color="#303030", background_opacity=0, outline_color="#222222", outline_width=1,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=False, italic=True, font_size=48, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=0.72,
     ),
     "typewriter": dict(
         font_name="Courier New", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#111111", background_opacity=85, outline_color="#000000", outline_width=1,
-        shadow=1, bold=True, italic=False, font_size=45, border_style=3, highlight=False,
+        background_color="#141416", background_opacity=88, outline_color="#000000", outline_width=0,
+        shadow_distance=0, shadow_color="", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=45, border_style=3, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "minimal_shadow": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=1,
-        shadow=5, bold=False, italic=False, font_size=54, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=0,
+        shadow_distance=6, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=54, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "news_ticker": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#D71920", background_opacity=94, outline_color="#D71920", outline_width=0,
-        shadow=0, bold=True, italic=False, font_size=44, border_style=3, highlight=False,
+        background_color="#D71920", background_opacity=95, outline_color="#D71920", outline_width=0,
+        shadow_distance=0, shadow_color="", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=46, border_style=3, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "purple_neon": dict(
         font_name="Arial", text_color="#D58CFF", line1_color="#D58CFF", line2_color="#D58CFF",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=3,
-        shadow=4, bold=True, italic=False, font_size=56, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#440066", outline_width=2,
+        shadow_distance=0, shadow_color="", glow=True, glow_color="#C044FF", glow_size=9,
+        bold=True, italic=False, font_size=56, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "green_focus": dict(
         font_name="Impact", text_color="#B8FF4A", line1_color="#B8FF4A", line2_color="#B8FF4A",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=3, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "cream_retro": dict(
         font_name="Georgia", text_color="#FFF0C2", line1_color="#FFF0C2", line2_color="#FFF0C2",
-        background_color="#402B18", background_opacity=0, outline_color="#23170D", outline_width=3,
-        shadow=3, bold=True, italic=False, font_size=50, border_style=1, highlight=False,
+        background_color="#402B18", background_opacity=0, outline_color="#23170D", outline_width=2.5,
+        shadow_distance=3, shadow_color="#23170D", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=50, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "editing_skool": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#FF8A00", background_opacity=95, outline_color="#8A3F00", outline_width=1,
-        shadow=2, bold=True, italic=False, font_size=54, border_style=3, highlight=False,
+        shadow_distance=2, shadow_color="#8A3F00", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=54, border_style=3, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "mr_beast": dict(
         font_name="Impact", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=6,
-        shadow=4, bold=True, italic=False, font_size=62, border_style=1, highlight=False,
+        shadow_distance=4, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=62, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "mr_beast_gold": dict(
         font_name="Impact", text_color="#FFD400", line1_color="#FFD400", line2_color="#FFD400",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=6,
-        shadow=4, bold=True, italic=False, font_size=62, border_style=1, highlight=False,
+        shadow_distance=4, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=62, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "highlight_orange": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=3,
-        shadow=3, bold=True, italic=False, font_size=58, border_style=1, highlight=True,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=True,
         highlight_color="#FF9D00", span_scale=1.0,
     ),
     "green_glow": dict(
         font_name="Impact", text_color="#B8FF4A", line1_color="#B8FF4A", line2_color="#B8FF4A",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=4, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#184000", outline_width=2,
+        shadow_distance=0, shadow_color="", glow=True, glow_color="#55FF00", glow_size=10,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "big_reveal": dict(
         font_name="Impact", text_color="#FFE600", line1_color="#FFE600", line2_color="#FFE600",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=6,
-        shadow=3, bold=True, italic=False, font_size=70, border_style=1, highlight=False,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=70, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "deep_shadow": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=2,
-        shadow=8, bold=True, italic=False, font_size=56, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=0,
+        shadow_distance=8, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=56, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "aqua_pop": dict(
         font_name="Impact", text_color="#3DEBFF", line1_color="#3DEBFF", line2_color="#3DEBFF",
         background_color="#000000", background_opacity=0, outline_color="#003F52", outline_width=4,
-        shadow=3, bold=True, italic=False, font_size=60, border_style=1, highlight=False,
+        shadow_distance=3, shadow_color="#002230", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=60, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "red_black_punch": dict(
         font_name="Impact", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#D71920", background_opacity=95, outline_color="#000000", outline_width=5,
-        shadow=3, bold=True, italic=False, font_size=58, border_style=3, highlight=False,
+        background_color="#D71920", background_opacity=95, outline_color="#000000", outline_width=4,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=58, border_style=3, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "clean_glow": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=3,
-        shadow=5, bold=False, italic=False, font_size=48, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=0,
+        shadow_distance=0, shadow_color="", glow=True, glow_color="#FFFFFF", glow_size=7,
+        bold=False, italic=False, font_size=48, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "pixelated_word": dict(
         font_name="Courier New", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=2,
-        shadow=2, bold=True, italic=False, font_size=50, border_style=1, highlight=True,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=50, border_style=1, highlight=True,
         highlight_color="#FFE600", span_scale=1.0,
     ),
     "liquid_glass": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
-        background_color="#24285A", background_opacity=70, outline_color="#7D86FF", outline_width=1,
-        shadow=5, bold=True, italic=False, font_size=48, border_style=3, highlight=False,
+        background_color="#24285A", background_opacity=75, outline_color="#7D86FF", outline_width=1,
+        shadow_distance=4, shadow_color="#4650C8", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=48, border_style=3, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "tabahi": dict(
         font_name="Georgia", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=2,
-        shadow=4, bold=True, italic=True, font_size=52, border_style=1, highlight=False,
+        shadow_distance=4, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=True, font_size=52, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "deep_glow": dict(
         font_name="Impact", text_color="#FF24FF", line1_color="#FF24FF", line2_color="#FF24FF",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=4,
-        shadow=5, bold=True, italic=False, font_size=58, border_style=1, highlight=False,
+        background_color="#000000", background_opacity=0, outline_color="#500050", outline_width=2,
+        shadow_distance=0, shadow_color="", glow=True, glow_color="#FF24FF", glow_size=11,
+        bold=True, italic=False, font_size=58, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=1.0,
     ),
     "highlighted_word": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFAE00",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=2,
-        shadow=3, bold=True, italic=False, font_size=54, border_style=1, highlight=True,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=54, border_style=1, highlight=True,
         highlight_color="#FFAE00", span_scale=1.0,
     ),
     "delhi_editor": dict(
         font_name="Georgia", text_color="#FFFFFF", line1_color="#EEEEEE", line2_color="#FFFFFF",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=1,
-        shadow=3, bold=False, italic=True, font_size=52, border_style=1, highlight=False,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=False, italic=True, font_size=52, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=0.88,
     ),
     "aura_blue": dict(
         font_name="Georgia", text_color="#8FE7FF", line1_color="#FFFFFF", line2_color="#8FE7FF",
         background_color="#000000", background_opacity=0, outline_color="#004E67", outline_width=2,
-        shadow=7, bold=True, italic=True, font_size=55, border_style=1, highlight=False,
+        shadow_distance=0, shadow_color="", glow=True, glow_color="#0088B0", glow_size=7,
+        bold=True, italic=True, font_size=55, border_style=1, highlight=False,
         highlight_color="#FFFFFF", span_scale=0.88,
     ),
     "swiss_focus": dict(
         font_name="Arial", text_color="#FFFFFF", line1_color="#FFFFFF", line2_color="#FFD400",
         background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=2,
-        shadow=2, bold=True, italic=False, font_size=60, border_style=1, highlight=True,
+        shadow_distance=2, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=False, font_size=60, border_style=1, highlight=True,
         highlight_color="#FFD400", span_scale=1.0,
     ),
     "scribble": dict(
         font_name="Georgia", text_color="#FFF4A3", line1_color="#FFF4A3", line2_color="#FFCF2E",
-        background_color="#000000", background_opacity=0, outline_color="#000000", outline_width=1,
-        shadow=3, bold=True, italic=True, font_size=50, border_style=1, highlight=True,
+        background_color="#000000", background_opacity=0, outline_color="#222200", outline_width=1.5,
+        shadow_distance=3, shadow_color="#000000", glow=False, glow_color="", glow_size=0,
+        bold=True, italic=True, font_size=50, border_style=1, highlight=True,
         highlight_color="#FFCF2E", span_scale=0.88,
     ),
 }
@@ -283,45 +322,43 @@ CAPTION_TEMPLATES = {
 # =========================================================
 # SINGLE SOURCE OF TRUTH FOR TEMPLATE FIDELITY
 # =========================================================
-# The browser gallery, editor preview and FFmpeg renderer all receive this
-# complete object.  Do not rebuild a template from only color/font settings.
 TEMPLATE_META = {
     "bold_white": {"category":"Built-in Templates", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
     "white_yellow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":24, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "yellow_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"glow"},
+    "yellow_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
     "creator_bold": {"category":"Built-in Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.82, "letter_spacing":0, "position":"center", "animation":"pop", "highlight_mode":"word"},
-    "clean_white": {"category":"Static Captions", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"none"},
+    "clean_white": {"category":"Static Captions", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
     "yellow_bold": {"category":"Built-in Templates", "chunk_words":3, "max_chars":24, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "black_box": {"category":"Static Captions", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"none", "highlight_mode":"word"},
-    "white_box": {"category":"Static Captions", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"none"},
-    "red_alert": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"pop"},
+    "black_box": {"category":"Static Captions", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"scale_in", "highlight_mode":"word"},
+    "white_box": {"category":"Static Captions", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"scale_in"},
+    "red_alert": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"bounce"},
     "cyan_pop": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
     "blue_electric": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":25, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
     "pink_creator": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"lower", "animation":"pop"},
     "soft_aesthetic": {"category":"Static Captions", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "typewriter": {"category":"Static Captions", "chunk_words":5, "max_chars":29, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0.5, "position":"lower", "animation":"none"},
+    "typewriter": {"category":"Static Captions", "chunk_words":5, "max_chars":29, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0.5, "position":"lower", "animation":"scale_in"},
     "cream_retro": {"category":"Built-in Templates", "chunk_words":4, "max_chars":27, "max_lines":2, "text_case":"upper", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"fade"},
     "minimal_shadow": {"category":"Static Captions", "chunk_words":5, "max_chars":31, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
     "news_ticker": {"category":"AI / Creator Templates", "chunk_words":5, "max_chars":31, "max_lines":2, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"slide"},
-    "purple_neon": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow"},
+    "purple_neon": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
     "green_focus": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"pop"},
     "editing_skool": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "mr_beast": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
-    "mr_beast_gold": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
+    "mr_beast": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"bounce"},
+    "mr_beast_gold": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"bounce"},
     "highlight_orange": {"category":"Dynamic Captions", "chunk_words":4, "max_chars":27, "max_lines":2, "text_case":"sentence", "line_height":0.90, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "green_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow"},
+    "green_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
     "big_reveal": {"category":"AI / Creator Templates", "chunk_words":2, "max_chars":18, "max_lines":1, "text_case":"upper", "line_height":0.82, "letter_spacing":0, "position":"center", "animation":"pop"},
     "deep_shadow": {"category":"Static Captions", "chunk_words":4, "max_chars":28, "max_lines":2, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"fade"},
     "aqua_pop": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
     "red_black_punch": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop"},
     "clean_glow": {"category":"Built-in Templates", "chunk_words":5, "max_chars":30, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
     "pixelated_word": {"category":"Static Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
-    "liquid_glass": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"fade"},
+    "liquid_glass": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"scale_in"},
     "tabahi": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.84, "letter_spacing":0, "position":"center", "animation":"pop"},
-    "deep_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow"},
+    "deep_glow": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":22, "max_lines":1, "text_case":"upper", "line_height":0.88, "letter_spacing":0, "position":"lower", "animation":"glow_pulse"},
     "highlighted_word": {"category":"Dynamic Captions", "chunk_words":4, "max_chars":26, "max_lines":2, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
     "delhi_editor": {"category":"AI / Creator Templates", "chunk_words":4, "max_chars":28, "max_lines":2, "text_case":"sentence", "line_height":0.92, "letter_spacing":0, "position":"lower", "animation":"fade"},
-    "aura_blue": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"pop"},
+    "aura_blue": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":22, "max_lines":2, "text_case":"upper", "line_height":0.86, "letter_spacing":0, "position":"center", "animation":"glow_pulse"},
     "swiss_focus": {"category":"Dynamic Captions", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"lower", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
     "scribble": {"category":"AI / Creator Templates", "chunk_words":3, "max_chars":23, "max_lines":1, "text_case":"sentence", "line_height":0.9, "letter_spacing":0, "position":"lower", "animation":"pop", "highlight_mode":"word"},
 }
@@ -343,20 +380,20 @@ TEMPLATE_PRESENTATION = {
     "typewriter": ("Typewriter", "Story", "t-typewriter", "TELL THE", "STORY"),
     "cream_retro": ("Cream Retro", "Retro", "t-cream-retro", "A LITTLE", "RETRO"),
     "minimal_shadow": ("Minimal Shadow", "Clean", "t-minimal", "SAY IT", "CLEARLY"),
-    "news_ticker": ("News Ticker", "Headline", "t-news", "BREAKING", "NEWS"),
-    "purple_neon": ("Purple Neon", "Night", "t-purple", "CREATE", "MORE"),
+    "news_ticker": ("News Ticker", "Breaking News", "t-news", "BREAKING", "NEWS"),
+    "purple_neon": ("Purple Neon", "Neon", "t-purple", "CREATE", "MORE"),
     "green_focus": ("Green Focus", "Energy", "t-green", "FOCUS", "HERE"),
     "editing_skool": ("Editing Skool", "Creator", "t-editing-skool", "MAKE IT", "POP"),
-    "mr_beast": ("Mr Beast Style", "Bold", "t-mr-beast", "THE", "MOMENT"),
-    "mr_beast_gold": ("Mr Beast Gold", "Bold", "t-mr-beast-gold", "THIS IS", "BIG"),
+    "mr_beast": ("Mr Beast Style", "Punchy", "t-mr-beast", "THE", "MOMENT"),
+    "mr_beast_gold": ("Mr Beast Gold", "Gold", "t-mr-beast-gold", "THIS IS", "BIG"),
     "highlight_orange": ("Highlighted Word", "Dynamic", "t-highlight-orange", "WATCH", "THIS"),
     "green_glow": ("Creator Glow", "Glow", "t-green-glow", "GO", "VIRAL"),
     "big_reveal": ("Big Reveal", "Kinetic", "t-big-reveal", "THIS", "CHANGES"),
-    "deep_shadow": ("Deep Shadow", "Clean", "t-deep-shadow", "THE", "ANSWER"),
+    "deep_shadow": ("Deep Shadow", "3D Shadow", "t-deep-shadow", "THE", "ANSWER"),
     "aqua_pop": ("Aqua Pop", "Neon", "t-aqua-pop", "LEVEL", "UP"),
     "red_black_punch": ("Red Punch", "Punchy", "t-red-black-punch", "STOP", "NOW"),
-    "clean_glow": ("Clean Glow", "Minimal", "t-clean-glow", "the quick", "brown fox"),
-    "pixelated_word": ("Pixelated Word", "Word", "t-pixelated", "THE", "BROWN"),
+    "clean_glow": ("Clean Glow", "Ethereal", "t-clean-glow", "the quick", "brown fox"),
+    "pixelated_word": ("Pixelated Word", "Retro", "t-pixelated", "THE", "BROWN"),
     "liquid_glass": ("Liquid Glass", "Glass", "t-liquid-glass", "the quick", "fox"),
     "tabahi": ("Tabahi", "Editorial", "t-tabahi", "THE QUICK", "BROWN FOX"),
     "deep_glow": ("Deep Glow", "Glow", "t-deep-glow", "BROWN FOX", "JUMPS OVER"),
@@ -369,7 +406,7 @@ TEMPLATE_PRESENTATION = {
 
 
 def get_template_object(template_id: str) -> dict:
-    """Return the complete immutable-ish template contract used everywhere."""
+    """Return the complete canonical template contract used everywhere."""
     if template_id not in CAPTION_TEMPLATES:
         template_id = "bold_white"
     base = dict(CAPTION_TEMPLATES[template_id])
@@ -392,13 +429,13 @@ def get_template_object(template_id: str) -> dict:
         "line_height": float(meta.get("line_height", 0.90)),
         "letter_spacing": float(meta.get("letter_spacing", 0)),
         "position": meta.get("position", "lower"),
-        "animation": meta.get("animation", "none"),
+        "animation": meta.get("animation", "pop"),
         "highlight_mode": meta.get("highlight_mode", "none" if not base.get("highlight") else "word"),
-        "padding_x": float(base.get("padding_x", 8)),
-        "padding_y": float(base.get("padding_y", 3)),
-        "border_radius": float(base.get("border_radius", 4)),
+        "padding_x": float(base.get("padding_x", 10)),
+        "padding_y": float(base.get("padding_y", 4)),
+        "border_radius": float(base.get("border_radius", 6)),
         "safe_area": 0.92,
-        "version": 2,
+        "version": 14,
     })
     return base
 
@@ -854,8 +891,7 @@ def template_display_text(text: str, template: dict) -> str:
 def render_highlighted_text(chunk: dict, active_index: int, style: dict, max_chars: int, template: dict | None = None,
                             span_size: int = 54, strong_size: int = 84) -> str:
     """Render one complete caption chunk while changing only the active word color."""
-    template = template or get_template_object("bold_white")
-    tmpl_id = str(template.get('id', ''))
+    template = template or style or get_template_object("bold_white")
     words = chunk.get('words', []) or []
     texts = [template_display_text(w.get('text', ''), template) for w in words]
     max_lines = max(1, int(template.get('max_lines', 2)))
@@ -875,19 +911,9 @@ def render_highlighted_text(chunk: dict, active_index: int, style: dict, max_cha
         first = words[:split]
         second = words[split:]
 
-    line1_color = ass_color(style['text_color'])
-    if tmpl_id == 'white_yellow':
-        line2_color = ass_color(style.get('highlight_color', '#FFE600'))
-    elif tmpl_id == 'clean_white':
-        line1_color = ass_color('#BBBBBB')
-        line2_color = ass_color('#FFFFFF')
-    elif tmpl_id == 'soft_aesthetic':
-        line1_color = ass_color('#C8C0B5')
-        line2_color = ass_color('#F4F0EA')
-    else:
-        line2_color = ass_color(style['text_color'])
-
-    highlight_colour = ass_color(style.get('highlight_color', style['text_color']))
+    line1_color = ass_color(template.get('line1_color', template.get('text_color', '#FFFFFF')))
+    line2_color = ass_color(template.get('line2_color', template.get('text_color', '#FFFFFF')))
+    highlight_colour = ass_color(template.get('highlight_color', '#FFE600'))
 
     def render_word(index, word, default_color):
         safe = safe_ass_text(template_display_text(word.get('text', ''), template))
@@ -916,22 +942,22 @@ def _reference_canvas(video_width: int, video_height: int) -> tuple[int, int]:
 
 def write_ass(chunks, out_path: Path, font_size: int, position_percent: int, style: dict,
               video_width: int = 1920, video_height: int = 1080, template: dict | None = None) -> None:
-    """Render captions from the same template object used by the editor."""
+    """Render captions strictly from the canonical template definition."""
     source_width = max(1, int(video_width))
     source_height = max(1, int(video_height))
     canvas_width, canvas_height = _reference_canvas(source_width, source_height)
-    template = template or get_template_object("bold_white")
-    tmpl_id = str(template.get('id', ''))
+    template = template or style or get_template_object("bold_white")
+    tmpl_id = str(template.get('id', 'bold_white'))
     position_percent = max(8, min(92, int(position_percent)))
 
-    # On a standard canvas, scale font sizes from the template definition so they match creator impact
+    # On a standard canvas, scale font sizes from the canonical template definition
     scale_canvas = canvas_width / 720.0
-    user_multiplier = max(0.5, min(2.0, float(font_size) / 54.0))
+    user_multiplier = max(0.6, min(1.6, float(font_size) / 54.0))
 
-    native_size = float(style.get("font_size", 58) or 58)
+    native_size = float(template.get("font_size", 58) or 58)
     strong_size = _effective_export_font_size(native_size * scale_canvas * user_multiplier)
 
-    span_scale = float(style.get("span_scale", 1.0))
+    span_scale = float(template.get("span_scale", 1.0))
     if int(template.get("max_lines", 2)) > 1 and span_scale < 0.99:
         span_size = _effective_export_font_size(strong_size * span_scale)
     else:
@@ -939,7 +965,6 @@ def write_ass(chunks, out_path: Path, font_size: int, position_percent: int, sty
 
     effective_size = strong_size
 
-    # The template itself controls safe-area and line rhythm.
     max_chars = max(12, int(template.get("max_chars", 28)))
     safe_area = max(0.72, min(0.96, float(template.get("safe_area", 0.92))))
     if source_height > source_width:
@@ -948,24 +973,41 @@ def write_ass(chunks, out_path: Path, font_size: int, position_percent: int, sty
     max_chars = min(max_chars, max(18, round(0.11 * safe_canvas_width)))
 
     base_y = round(canvas_height * (position_percent / 100.0))
-    export_border_style = int(style.get("border_style", 1) or 1)
+    export_border_style = int(template.get("border_style", 1) or 1)
     scale_stroke = canvas_width / 720.0
 
+    is_glow = bool(template.get("glow", False))
+    glow_color = template.get("glow_color", template.get("text_color", "#FFFFFF"))
+    glow_size = float(template.get("glow_size", 8))
+
     if export_border_style == 3:
-        export_outline_width = max(16, round(12 * scale_stroke))
-        bg_opacity = int(style.get('background_opacity', 0) or 0)
-        if bg_opacity <= 0:
-            bg_opacity = 90
-        bg_opacity = max(40, min(100, bg_opacity))
+        # Bounding box / card style (black_box, white_box, news_ticker, editing_skool, liquid_glass)
+        export_outline_width = max(8, round(10 * scale_stroke))
+        bg_opacity = int(template.get('background_opacity', 90) or 90)
+        bg_opacity = max(20, min(100, bg_opacity))
         bg_alpha = round(255 * (100 - bg_opacity) / 100)
-        box_outline_colour = ass_color(style.get('background_color', '#000000'), bg_alpha)
-        back_colour = ass_color(style.get('background_color', '#000000'), bg_alpha)
+        bg_hex = template.get('background_color', '#000000')
+        box_colour = ass_color(bg_hex, bg_alpha)
+        box_outline_colour = box_colour
+        back_colour = box_colour
+        shadow_width = 0
     else:
-        export_outline_width = max(3, round(float(style.get('outline_width', 2)) * scale_stroke * 1.35))
-        box_outline_colour = ass_color(style.get('outline_color', '#000000'))
-        bg_alpha = 0
-        back_colour = ass_color(style.get('outline_color', '#000000'))
-    shadow_width = max(0, round(float(style.get('shadow', 2)) * scale_stroke * 1.2))
+        # Outline + Shadow style
+        raw_outline = float(template.get('outline_width', 0) or 0)
+        if raw_outline > 0:
+            export_outline_width = max(1, round(raw_outline * scale_stroke))
+            box_outline_colour = ass_color(template.get('outline_color', '#000000'))
+        else:
+            export_outline_width = 0
+            box_outline_colour = "&H00000000"
+
+        raw_shadow = float(template.get('shadow_distance', template.get('shadow', 0)) or 0)
+        if raw_shadow > 0:
+            shadow_width = max(1, round(raw_shadow * scale_stroke))
+            back_colour = ass_color(template.get('shadow_color', '#000000'))
+        else:
+            shadow_width = 0
+            back_colour = "&H00000000"
 
     header = f"""[Script Info]
 ScriptType: v4.00+
@@ -977,11 +1019,14 @@ YCbCr Matrix: TV.709
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,{_ass_font_name(style)},{effective_size},{ass_color(style['text_color'])},{ass_color(style['text_color'])},{box_outline_colour},{back_colour},{-1 if style.get('bold') else 0},{1 if style.get('italic') else 0},0,0,100,100,{float(template.get('letter_spacing', 0)):.2f},0,{export_border_style},{export_outline_width},{shadow_width},5,0,0,0,1
+Style: Default,{_ass_font_name(template)},{effective_size},{ass_color(template['text_color'])},{ass_color(template['text_color'])},{box_outline_colour},{back_colour},{-1 if template.get('bold') else 0},{1 if template.get('italic') else 0},0,0,100,100,{float(template.get('letter_spacing', 0)):.2f},0,{export_border_style},{export_outline_width},{shadow_width},5,0,0,0,1
+Style: Glow,{_ass_font_name(template)},{effective_size},{ass_color(glow_color)},{ass_color(glow_color)},{ass_color(glow_color)},{ass_color(glow_color)},{-1 if template.get('bold') else 0},{1 if template.get('italic') else 0},0,0,100,100,{float(template.get('letter_spacing', 0)):.2f},0,1,{max(2, round(glow_size * scale_stroke * 0.6))},0,5,0,0,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
+
+    animation = str(template.get("animation", "pop"))
 
     lines = [header]
     for chunk in (chunks or []):
@@ -1006,13 +1051,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             left = " ".join(raw_words[:split])
             right = " ".join(raw_words[split:])
             if right:
-                left_col = ass_color(style.get('line1_color', style['text_color']))
-                right_col = ass_color(style.get('line2_color', style['text_color']))
+                left_col = ass_color(template.get('line1_color', template['text_color']))
+                right_col = ass_color(template.get('line2_color', template['text_color']))
                 left_styled = "{" + f"\\fs{span_size}\\1c{left_col}" + "}" + safe_ass_text(left)
                 right_styled = "{" + f"\\fs{strong_size}\\1c{right_col}" + "}" + safe_ass_text(right)
                 display_text = left_styled + r"\N" + right_styled
             else:
-                line_col = ass_color(style.get('line1_color', style['text_color']))
+                line_col = ass_color(template.get('line1_color', template['text_color']))
                 display_text = "{" + f"\\fs{strong_size}\\1c{line_col}" + "}" + safe_ass_text(left)
 
         line_count = max(1, display_text.count(r"\N") + 1)
@@ -1021,30 +1066,57 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         safe_y = max(estimated_half_h + margin, min(base_y, canvas_height - estimated_half_h - margin))
         start = ass_time(chunk['start'])
         end = ass_time(chunk['end'])
-        animation = str(template.get("animation", "none"))
-        if animation == "slide":
-            pos_tag = f"{{\\an5\\move({canvas_width//2},{safe_y+35},{canvas_width//2},{safe_y},0,180)}}"
-        else:
-            pos_tag = f"{{\\an5\\pos({canvas_width // 2},{safe_y})}}"
-            if animation == "pop":
-                pos_tag += r"{\fscx92\fscy92\t(0,120,\fscx100\fscy100)}"
-            elif animation == "fade":
-                pos_tag += r"{\fad(110,80)}"
-            elif animation == "glow":
-                glow = max(2, min(10, int(round(float(style.get("shadow", 5)) * 0.7))))
-                pos_tag += "{\\blur%d\\bord%d}" % (glow, max(1, int(export_outline_width)))
 
-        if style.get('highlight') and len(words) > 1:
+        # Stylish, modern animations matching short-form creator video editors
+        if animation == "slide":
+            pos_tag = f"{{\\an5\\move({canvas_width//2},{safe_y+40},{canvas_width//2},{safe_y},0,150)\\fad(90,60)}}"
+            pos_static = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+        elif animation == "pop":
+            pos_tag = f"{{\\an5\\pos({canvas_width//2},{safe_y})\\fscx82\\fscy82\\t(0,90,\\fscx108\\fscy108)\\t(90,170,\\fscx100\\fscy100)}}"
+            pos_static = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+        elif animation == "bounce":
+            pos_tag = f"{{\\an5\\pos({canvas_width//2},{safe_y})\\fscx78\\fscy78\\t(0,100,\\fscx114\\fscy114)\\t(100,180,\\fscx95\\fscy95)\\t(180,250,\\fscx100\\fscy100)}}"
+            pos_static = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+        elif animation == "scale_in":
+            pos_tag = f"{{\\an5\\pos({canvas_width//2},{safe_y})\\fscx72\\fscy72\\fad(80,0)\\t(0,140,\\fscx100\\fscy100)}}"
+            pos_static = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+        elif animation == "fade":
+            pos_tag = f"{{\\an5\\pos({canvas_width//2},{safe_y})\\fad(120,90)}}"
+            pos_static = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+        elif animation == "glow_pulse":
+            pos_tag = f"{{\\an5\\pos({canvas_width//2},{safe_y})\\fscx96\\fscy96\\t(0,140,\\fscx104\\fscy104)\\t(140,280,\\fscx100\\fscy100)}}"
+            pos_static = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+        else:
+            pos_tag = f"{{\\an5\\pos({canvas_width//2},{safe_y})}}"
+            pos_static = pos_tag
+
+        glow_blur = max(4, round(glow_size * scale_stroke * 0.9))
+
+        if template.get('highlight') and len(words) > 1:
             for idx, word in enumerate(words):
                 active_start = max(float(chunk['start']), float(word.get('start', chunk['start'])))
                 next_start = float(words[idx + 1].get('start', chunk['end'])) if idx + 1 < len(words) else float(chunk['end'])
                 active_end = min(float(chunk['end']), next_start)
                 if active_end <= active_start:
                     continue
-                highlighted = render_highlighted_text(chunk, idx, style, max_chars, template, span_size, strong_size)
-                lines.append(f"Dialogue: 0,{ass_time(active_start)},{ass_time(active_end)},Default,,0,0,0,,{pos_tag}{highlighted}\n")
+                tag_to_use = pos_tag if abs(active_start - float(chunk['start'])) < 0.03 else pos_static
+                highlighted = render_highlighted_text(chunk, idx, template, max_chars, template, span_size, strong_size)
+                
+                if is_glow:
+                    # Layer 0: Glow aura
+                    lines.append(f"Dialogue: 0,{ass_time(active_start)},{ass_time(active_end)},Glow,,0,0,0,,{tag_to_use}{{\\blur{glow_blur}}}{highlighted}\n")
+                    # Layer 1: Sharp text
+                    lines.append(f"Dialogue: 1,{ass_time(active_start)},{ass_time(active_end)},Default,,0,0,0,,{tag_to_use}{{\\blur0}}{highlighted}\n")
+                else:
+                    lines.append(f"Dialogue: 0,{ass_time(active_start)},{ass_time(active_end)},Default,,0,0,0,,{tag_to_use}{highlighted}\n")
         else:
-            lines.append(f"Dialogue: 0,{start},{end},Default,,0,0,0,,{pos_tag}{display_text}\n")
+            if is_glow:
+                # Layer 0: Glow aura
+                lines.append(f"Dialogue: 0,{start},{end},Glow,,0,0,0,,{pos_tag}{{\\blur{glow_blur}}}{display_text}\n")
+                # Layer 1: Sharp text
+                lines.append(f"Dialogue: 1,{start},{end},Default,,0,0,0,,{pos_tag}{{\\blur0}}{display_text}\n")
+            else:
+                lines.append(f"Dialogue: 0,{start},{end},Default,,0,0,0,,{pos_tag}{display_text}\n")
 
     out_path.write_text(''.join(lines), encoding='utf-8')
 
@@ -1399,21 +1471,9 @@ async def render_editor(request: dict):
             req_id = requested_template
 
         session_template = session.get("template")
-        chunk_tid = chunks[0].get("template_id") if chunks else None
-        if req_id and req_id in CAPTION_TEMPLATES:
-            template_id = req_id
-        elif chunk_tid and chunk_tid in CAPTION_TEMPLATES:
-            template_id = chunk_tid
-        elif isinstance(session_template, dict):
-            template_id = str(session_template.get("id", "bold_white"))
-        else:
-            template_id = str(session.get("template_id", session_template or "bold_white"))
-
+        template_id = str(session.get("template_id") or (session_template.get("id") if isinstance(session_template, dict) else req_id) or "bold_white")
         template = get_template_object(template_id)
-        style = dict(CAPTION_TEMPLATES[template["id"]])
-
-        if isinstance(requested_template, dict) and str(requested_template.get("id", template_id)) == template_id:
-            template.update({k: requested_template[k] for k in template.keys() if k in requested_template})
+        style = dict(template)
 
         try:
             req_size = int(request.get("font_size", 0))
